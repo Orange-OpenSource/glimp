@@ -1,0 +1,24 @@
+<project name="Build" default="compress">
+    <target name="concatenate">
+        <concat destfile="../glimp.js" encoding="UTF-8" outputencoding="UTF-8" fixlastline="true">
+            <filelist id="filelist" dir="../src">
+                <file name="glimp.js"/>
+                <file name="glimp_canvas.js"/>
+                <file name="glimp_frame.js"/>
+                <file name="glimp_filter.js"/>
+                <file name="glimp_export.js"/>
+            </filelist>
+        </concat>
+    </target>
+    <target name="compress" depends="concatenate" description="Compress glimp.js to glimp-min.js">
+        <apply executable="java" parallel="false">
+            <filelist dir="../" files="glimp.js" />
+            <arg line="-jar" />
+            <arg path="yuicompressor-2.4.2.jar" />
+            <srcfile />
+            <arg line="-o" />
+            <mapper type="glob" from="*.js" to="../*-min.js" />
+            <targetfile />
+        </apply>
+    </target>
+</project>
