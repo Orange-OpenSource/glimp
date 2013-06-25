@@ -21,11 +21,7 @@
         var _width = width;
         var _height = height;
         var _gl = gl;
-        var _fb = _gl.createFramebuffer();
-        //bind framebuffer to texture
-        _gl.bindFramebuffer(_gl.FRAMEBUFFER, _fb);
-        _texture = createTexture(_gl, _width, _height);
-        _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, _texture, 0);
+        var _texture = createTexture(_gl, _width, _height);
         
         return {
             load : function (element) {
