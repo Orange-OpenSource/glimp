@@ -49,7 +49,7 @@
         _gl.bufferData(_gl.ARRAY_BUFFER, new Float32Array([ 0, 0, 0, 1, 1, 0, 1, 1 ]), gl.STATIC_DRAW);
         var _texCoordBuffer = _gl.createBuffer();
         _gl.bindBuffer(_gl.ARRAY_BUFFER, _texCoordBuffer);
-        _gl.bufferData(_gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 0, 0, 1, 1, 1, 0 ]), gl.STATIC_DRAW);
+        _gl.bufferData(_gl.ARRAY_BUFFER, new Float32Array([ 0, 0, 0, 1, 1, 0, 1, 1 ]), gl.STATIC_DRAW);
         // Create a framebuffer for this filter
         var _fb = _gl.createFramebuffer();
                 
