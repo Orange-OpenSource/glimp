@@ -53,16 +53,20 @@ div.main > video {
 
         var start = function() {
             var videoFrame = null;
-            var filter = null;
+            var filter0 = null;
+            var filter1 = null;
             var tick = function() {
                 stat.new_frame();
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     if(!videoFrame) {
                         videoFrame = glimp.frame(video);
-                        filter = glimp.skin();
+                        filter0 = glimp.copy();
+                        filter1 = glimp.copy();
+                        tmpFrame = glimp.frame();
                     } else {
                         videoFrame.load(video);
-                        filter.apply(videoFrame);
+                        filter0.apply(videoFrame,tmpFrame);
+                        filter1.apply(tmpFrame);
                     }
                 }
                 log.innerHTML = stat.log();
