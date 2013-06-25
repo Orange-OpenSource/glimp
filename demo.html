@@ -52,21 +52,20 @@ div.main > video {
         var stat = new profiler();
 
         var start = function() {
-            var videoFrame = null;
-            var filter0 = null;
-            var filter1 = null;
+            var filter0,filter1;
+            var frame0,frame1;
             var tick = function() {
                 stat.new_frame();
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    if(!videoFrame) {
-                        videoFrame = glimp.frame(video);
+                    if(!frame0) {
+                        frame0 = glimp.frame(video);
+                        frame1 = glimp.frame();
                         filter0 = glimp.copy();
-                        filter1 = glimp.copy();
-                        tmpFrame = glimp.frame();
+                        filter1 = glimp.skin();
                     } else {
-                        videoFrame.load(video);
-                        filter0.apply(videoFrame,tmpFrame);
-                        filter1.apply(tmpFrame);
+                        frame0.load(video);
+                        filter0.apply(frame0,frame1);
+                        filter1.apply(frame1);
                     }
                 }
                 log.innerHTML = stat.log();
