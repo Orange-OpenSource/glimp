@@ -12,6 +12,7 @@
                 <file name="skin.js"/>
                 <file name="convolution.js"/>
                 <file name="mix.js"/>
+                <file name="colormask.js"/>
             </filelist>
         </concat>
     </target>
