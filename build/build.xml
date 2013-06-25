@@ -10,6 +10,7 @@
             </filelist>
             <filelist id="filters" dir="../src/filters">
                 <file name="skin.js"/>
+                <file name="convolution.js"/>
             </filelist>
         </concat>
     </target>

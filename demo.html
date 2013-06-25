@@ -61,11 +61,11 @@ div.main > video {
                         frame0 = glimp.frame(video);
                         frame1 = glimp.frame();
                         filter0 = glimp.copy();
-                        filter1 = glimp.skin();
+                        filter1 = glimp.convol();
                     } else {
                         frame0.load(video);
                         filter0.apply(frame0,frame1);
-                        filter1.apply(frame1);
+                        filter1.apply(frame1,null,'edgeDetect2');
                     }
                 }
                 log.innerHTML = stat.log();
