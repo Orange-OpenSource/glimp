@@ -1,10 +1,21 @@
 /**
- * @filter         Mix
- * @description    Mixes the image with a reference image of the same size.
- * @param amount   0 to 1 (0 for no effect, 1 for complete replacement)
+ * @author David Corvoysier / Copyright Orange 2013
+ * 
+ * Filter allowing to mix the input frame with a reference frame
+ * 
+ * amount: 0 to 1 (0 means no change, 1 for a full replacement)
+ * 
  */
-function mix(reference,amount) {
-    gl.mix = gl.mix || new Shader(null, '\
+(function(global) {
+
+    // Register this filter
+    global.addFilter(
+        // Filter name
+        'mix',
+        // Vertex Shader (null uses default)
+        null,
+        // Fragment Shader (null uses default)        
+        '\
         uniform sampler2D texture;\
         uniform sampler2D reference;\
         uniform float amount;\
@@ -14,19 +25,19 @@ function mix(reference,amount) {
             vec4 rcolor = texture2D(reference, texCoord);\
             gl_FragColor = rcolor*amount + color*(1.0-amount);\
         }\
-    ');
-
-    // Use reference texture
-    reference._.use(1);
-    // Set texture uniform in shader
-    gl.mix.textures({reference:1});
+        ',
+        // Uniforms callback
+        function (gl, program, frameIn, frameOut, reference, amount) {
+            // Bind reference texture at position 1
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, reference.asTexture());
+            // Set reference uniform to position 1
+            var refLocation = gl.getUniformLocation(program, "reference");
+            gl.uniform1i(refLocation, 1);
+            // Set amount
+            var amountLocation = gl.getUniformLocation(program, "amount");
+            gl.uniform1f(amountLocation, amount);
+        }
+    );
     
-    simpleShader.call(this, gl.mix, {
-        amount: clamp(0, amount, 1)
-    });
-
-    // Stop using reference texture
-    reference._.unuse(1);
-
-    return this;
-}
+})(glimp);

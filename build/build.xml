@@ -11,6 +11,7 @@
             <filelist id="filters" dir="../src/filters">
                 <file name="skin.js"/>
                 <file name="convolution.js"/>
+                <file name="mix.js"/>
             </filelist>
         </concat>
     </target>
