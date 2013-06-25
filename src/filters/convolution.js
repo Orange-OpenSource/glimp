@@ -1,5 +1,10 @@
 /**
  * @author David Corvoysier / Copyright Orange 2013
+ * 
+ * Convolution filter extracted from HTML5 Rocks "WebGL fundamentals"
+ * tutorial by Gregg Tavares
+ * http://www.html5rocks.com/en/tutorials/webgl/webgl_fundamentals/
+ * 
  */
 (function(global) {
     
