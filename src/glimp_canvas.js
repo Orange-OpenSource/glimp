@@ -40,12 +40,6 @@
 
     global.canvas = canvas;
     global.setCanvas = setCanvas;
-    global.draw = function (frame) {
-        var shader = new Shader(_gl);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, frame.asTexture());
-        shader.drawRect
-    }
 
 })(glimp);
 
