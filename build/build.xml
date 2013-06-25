@@ -8,6 +8,9 @@
                 <file name="glimp_filter.js"/>
                 <file name="glimp_export.js"/>
             </filelist>
+            <filelist id="filters" dir="../src/filters">
+                <file name="skin.js"/>
+            </filelist>
         </concat>
     </target>
     <target name="compress" depends="concatenate" description="Compress glimp.js to glimp-min.js">
