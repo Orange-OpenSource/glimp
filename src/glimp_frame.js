@@ -26,6 +26,7 @@
         return {
             load : function (element) {
                 _gl.bindTexture(_gl.TEXTURE_2D, _texture);
+                _gl.pixelStorei(_gl.UNPACK_FLIP_Y_WEBGL, true);
                 _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, _gl.UNSIGNED_BYTE, element);
             },
             asTexture: function () {
