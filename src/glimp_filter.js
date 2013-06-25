@@ -29,9 +29,10 @@
         return shader;
     }
     
-    var Filter = function (gl,vertexSource, fragmentSource) {
+    var Filter = function (gl, vertexSource, fragmentSource, callback) {
         // Store WebGL context
         var _gl = gl;
+        var _callback = callback;
         // Create the filter program
         var _program = _gl.createProgram();
         vertexSource = vertexSource || defaultVertexSource;
@@ -62,11 +63,7 @@
                 // Set the frameIn texture as input
                 _gl.activeTexture(_gl.TEXTURE0);
                 _gl.bindTexture(_gl.TEXTURE_2D, frameIn.asTexture());
-                    
-                // Set the frameOut texture as output
-                if(frameOut)
-                    _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, frameOut.asTexture(), 0);
-                
+
                 // Set coordinates
                 var vertexAttribute = _gl.getAttribLocation(_program, 'vertex');
                 _gl.enableVertexAttribArray(vertexAttribute);
@@ -82,6 +79,20 @@
                 var texLoc = _gl.getUniformLocation(_program, 'texture');
                 _gl.uniform1i(texLoc, 0);
                 
+                // This callback allows the filter to be specialized
+                if(_callback) {
+                    // Get the extra parameters we may have received
+                    var args = Array.prototype.slice.call(arguments);
+                    // Add gl & canvas parameters at the beginning
+                    args.splice(0, 2, _gl, _program);
+                    // Call our callback
+                    _callback.apply (this, args);
+                }
+
+                // Set the frameOut texture as output
+                if(frameOut)
+                    _gl.framebufferTexture2D(_gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, frameOut.asTexture(), 0);
+                
                 // Draw
                 _gl.drawArrays(_gl.TRIANGLE_STRIP, 0, 4);
                 
@@ -90,41 +101,15 @@
             }
         }
     };
-    
-    var copy = function () {
-        var canvas = global.canvas();
-        return new Filter(canvas.gl);
+
+    global.addFilter = function (name, vertexSource, fragmentSource, callback) {
+        global[name] = function () {
+            var canvas = global.canvas();
+            return new Filter(canvas.gl, vertexSource, fragmentSource, callback);
+        };
     };
     
-    var skin = function () {
-        var canvas = global.canvas();
-        return new Filter(
-            canvas.gl,
-            null,
-             '\
-                uniform sampler2D texture;\
-                varying vec2 texCoord;\
-                void main() {\
-                    vec4 color = texture2D(texture, texCoord);\
-                    float r = color.r;\
-                    float g = color.g;\
-                    float b = color.b;\
-                    \
-                    if ((r>45.0/255.0)&&(g>40.0/255.0)&&(b>20.0/255.0)\
-                        &&(r>g)&&(r>b)\
-                        &&(r-min(g,b)>15.0/255.0)\
-                        &&(abs(r-g)>15.0/255.0)){\
-                        gl_FragColor = color;\
-                    } else {\
-                        gl_FragColor = vec4(0.0,0.0,0.0,color.a);\
-                    }\
-                }\
-            '
-            );        
-    }
-    
-    global.copy = copy;
-    global.skin = skin;
+    // Register our default filter, a simple carbon-copy
+    global.addFilter('copy');
 
 })(glimp);
-
