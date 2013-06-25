@@ -117,9 +117,10 @@
         '\
             uniform sampler2D texture;\
             uniform float u_kernel[9];\
+            uniform vec2 u_textureSize;\
             varying vec2 texCoord;\
             void main() {\
-            vec2 onePixel = vec2(1.0, 1.0) / vec2(640.0,480.0);\
+            vec2 onePixel = vec2(1.0, 1.0) / u_textureSize;\
             vec4 colorSum =\
                texture2D(texture, texCoord + onePixel * vec2(-1, -1)) * u_kernel[0] +\
                texture2D(texture, texCoord + onePixel * vec2( 0, -1)) * u_kernel[1] +\
@@ -149,10 +150,12 @@
         }\
         ',
         // Uniforms callback
-        function (gl, program, kernel) {
+        function (gl, program, frameIn, frameOut, kernel) {
             kernel = kernel || 'normal';
             var kernelLocation = gl.getUniformLocation(program, "u_kernel[0]");
             gl.uniform1fv(kernelLocation, kernels[kernel]);
+            var textureSizeLocation = gl.getUniformLocation(program, "u_textureSize");
+            gl.uniform2f(textureSizeLocation, frameIn.width, frameIn.height);
         }
     );
     

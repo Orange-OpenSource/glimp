@@ -84,7 +84,7 @@
                     // Get the extra parameters we may have received
                     var args = Array.prototype.slice.call(arguments);
                     // Add gl & canvas parameters at the beginning
-                    args.splice(0, 2, _gl, _program);
+                    args.splice(0, 0, _gl, _program);
                     // Call our callback
                     _callback.apply (this, args);
                 }
