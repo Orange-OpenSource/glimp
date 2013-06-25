@@ -31,7 +31,9 @@
             },
             asTexture: function () {
                 return _texture;
-            }
+            },
+            width: _width,
+            height: _height
         }
     };
     
