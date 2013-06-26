@@ -1,5 +1,8 @@
 /**
  * @author David Corvoysier / Copyright Orange 2013
+ * 
+ * Adapted from glfx.js, Copyright (C) 2011 by Evan Wallace
+ *
  */
 (function(global) {
     
