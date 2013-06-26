@@ -13,6 +13,7 @@
                 <file name="convolution.js"/>
                 <file name="mix.js"/>
                 <file name="colormask.js"/>
+                <file name="erode.js"/>
             </filelist>
         </concat>
     </target>
