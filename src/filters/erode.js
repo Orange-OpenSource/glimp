@@ -24,7 +24,6 @@
             color = min(color, texture2D(texture, texCoord + onePixel * vec2( 0, -1)));\
             color = min(color, texture2D(texture, texCoord + onePixel * vec2( 1, -1)));\
             color = min(color, texture2D(texture, texCoord + onePixel * vec2(-1,  0)));\
-            color = min(color, texture2D(texture, texCoord + onePixel * vec2( 0,  0)));\
             color = min(color, texture2D(texture, texCoord + onePixel * vec2( 1,  0)));\
             color = min(color, texture2D(texture, texCoord + onePixel * vec2(-1,  1)));\
             color = min(color, texture2D(texture, texCoord + onePixel * vec2( 0,  1)));\

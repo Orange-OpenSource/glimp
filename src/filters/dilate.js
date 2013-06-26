@@ -24,7 +24,6 @@
             color = max(color, texture2D(texture, texCoord + onePixel * vec2( 0, -1)));\
             color = max(color, texture2D(texture, texCoord + onePixel * vec2( 1, -1)));\
             color = max(color, texture2D(texture, texCoord + onePixel * vec2(-1,  0)));\
-            color = max(color, texture2D(texture, texCoord + onePixel * vec2( 0,  0)));\
             color = max(color, texture2D(texture, texCoord + onePixel * vec2( 1,  0)));\
             color = max(color, texture2D(texture, texCoord + onePixel * vec2(-1,  1)));\
             color = max(color, texture2D(texture, texCoord + onePixel * vec2( 0,  1)));\
