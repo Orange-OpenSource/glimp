@@ -14,6 +14,7 @@
                 <file name="mix.js"/>
                 <file name="colormask.js"/>
                 <file name="erode.js"/>
+                <file name="dilate.js"/>
             </filelist>
         </concat>
     </target>
