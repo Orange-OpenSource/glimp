@@ -27,7 +27,7 @@
             dist2 += pow(color.g-rcolor.g,2.0);\
             dist2 += pow(color.b-rcolor.b,2.0);\
         \
-            gl_FragColor = dist2>ts*ts ? color: vec4(0.0,0.0,0.0,color.a);\
+            gl_FragColor = dist2>ts*ts ? color: vec4(0.0,0.0,0.0,0);\
         }\
         ',
         // Uniforms callback
