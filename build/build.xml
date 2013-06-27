@@ -13,6 +13,8 @@
                 <file name="convolution.js"/>
                 <file name="mix.js"/>
                 <file name="colormask.js"/>
+                <file name="gaussmix.js"/>
+                <file name="gaussmask.js"/>
                 <file name="erode.js"/>
                 <file name="dilate.js"/>
             </filelist>
