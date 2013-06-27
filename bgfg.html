@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Background Subtraction using WebGL</title>
+  <style>
+html, body {
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+
+div.main {
+  margin: 15px auto;
+}
+
+div.main > video {
+  display: none;
+}
+
+div.main > canvas {
+  background-color: black;
+}
+
+  </style>
+  <script src="./glimp.js"></script>
+  <script src="js/profiler.js"></script>
+  <script src="js/compatibility.js"></script>
+  <script src="js/dat.gui.min.js"></script>
+  <script type='text/javascript'>
+    window.addEventListener('load', function() {
+        var section = document.querySelector('div.main'),
+          video = section.querySelector('video'),
+          canvas = section.querySelector('#webgl-canvas');
+          log = document.querySelector('#log');
+        try {
+            glimp.setCanvas(canvas);
+        } catch (error) {
+            log.innerHTML = "<h4>"+error+"</h4>";
+        }
+        try {
+            compatibility.getUserMedia({video: true}, function(stream) {
+                try {
+                    video.src = compatibility.URL.createObjectURL(stream);
+                } catch (error) {
+                    video.src = stream;
+                }
+                setTimeout(function() {
+                        video.play();
+                        start();
+                    }, 500);
+            }, function (error) {
+                log.innerHTML = '<h4>WebRTC not available.</h4>';
+            });
+        } catch (error) {
+            log.innerHTML = '<h4>Unable to get access to your webcam</h4>';
+        }
+
+        var stat = new profiler();
+
+        var start = function() {
+            var options = new(function(){
+                this.alpha = 0.2;
+                this.threshold = 0.1;
+                this.kSize = 2;
+            });
+            
+            var gui = new dat.GUI();
+            
+            gui.add(options, 'alpha',0.01,1.0).step(0.01);
+            gui.add(options, 'threshold',0,1).step(0.05);
+            gui.add(options, 'kSize',1,10).step(1);
+            
+            var filter0,filter1,filter2,filter3;
+            var videoFrame,bgmodel,fgmask;
+            var tick = function() {
+                stat.new_frame();
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    nframes++;
+                    if(!videoFrame) {
+                        videoFrame = glimp.frame(video);
+                        bgmodel = glimp.frame(video);
+                        fgmask = glimp.frame();
+                        filter0 = glimp.gaussmix();
+                        filter1 = glimp.gaussmask();
+                        filter2 = glimp.erode();
+                        filter3 = glimp.dilate();
+                    } else {
+                        videoFrame.load(video);
+                        filter1.apply(videoFrame,fgmask,bgmodel,options.threshold);
+                        filter0.apply(videoFrame,bgmodel,bgmodel,Math.max(options.alpha,1/nframes));
+                        filter2.apply(fgmask,fgmask);
+                        filter3.apply(fgmask,null,options.kSize);
+                    }
+                }
+                log.innerHTML = stat.log();
+                compatibility.requestAnimationFrame(tick);
+            }
+            var nframes = 0;
+            tick();
+        }
+
+    });
+  </script>
+</head>
+<body>
+  <header>
+  <h1>Background Subtraction using WebGL</h1>
+  </header>
+  <div class="main">
+    <video></video>
+    <canvas id="webgl-canvas" width="640" height="480"></canvas>
+  </div>
+  <div id="log"></div>
+</body></html>
