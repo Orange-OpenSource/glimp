@@ -1,9 +1,9 @@
 /**
  * @author David Corvoysier / Copyright Orange 2013
  * 
- * Apply a mask base don color distance to the input frame
+ * Apply a mask based on color distance to the input frame
  * 
- * amount: 0 to 1 (0 means no change, 1 for a full replacement)
+ * threshold: the distance threshold (0 to 1)
  * 
  */
 (function(global) {
