@@ -35,9 +35,7 @@
                     throw new Error('incomplete framebuffer');
                 }
                 gl.viewport(0, 0, width, height);
-
                 gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, buffer);
-
                 gl.bindFramebuffer(gl.FRAMEBUFFER, null);                
             },
             texture: _texture,
