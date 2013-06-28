@@ -54,6 +54,9 @@
         var _texCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, _texCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 0, 0, 1, 1, 0, 1, 1 ]), gl.STATIC_DRAW);
+        var _invCoordBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, _invCoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 0, 0, 1, 1, 1, 0 ]), gl.STATIC_DRAW);
         // Create a framebuffer for this filter
         var _fb = gl.createFramebuffer();
                 
@@ -75,7 +78,10 @@
                 gl.useProgram(_program);
                 gl.bindBuffer(gl.ARRAY_BUFFER, _vertexBuffer);
                 gl.vertexAttribPointer(vertexAttribute, 2, gl.FLOAT, false, 0, 0);
-                gl.bindBuffer(gl.ARRAY_BUFFER, _texCoordBuffer);
+                if(frameOut)
+                    gl.bindBuffer(gl.ARRAY_BUFFER, _texCoordBuffer);
+                else
+                    gl.bindBuffer(gl.ARRAY_BUFFER, _invCoordBuffer);                
                 gl.vertexAttribPointer(texCoordAttribute, 2, gl.FLOAT, false, 0, 0);
                 
                 // Use the first texture
