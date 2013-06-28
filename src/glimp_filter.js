@@ -92,9 +92,13 @@
                     _callback.apply (this, args);
                 }
 
-                // Set the frameOut texture as output
-                if(frameOut)
+                if(frameOut && frameOut.asTexture) {
+                    // Set the frameOut texture as output
                     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameOut.asTexture(), 0);
+                    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+                        throw new Error('incomplete framebuffer');
+                    }
+                }
                 
                 // Draw
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                    
