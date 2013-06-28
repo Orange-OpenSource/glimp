@@ -41,7 +41,7 @@
         function (gl, program, frameIn, frameOut, reference, threshold, keepClose) {
             // Bind reference texture at position 1
             gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, reference.asTexture());
+            gl.bindTexture(gl.TEXTURE_2D, reference.texture);
             // Set reference uniform to position 1
             var refLocation = gl.getUniformLocation(program, "reference");
             gl.uniform1i(refLocation, 1);

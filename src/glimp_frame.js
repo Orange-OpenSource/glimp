@@ -29,9 +29,7 @@
                 _gl.pixelStorei(_gl.UNPACK_FLIP_Y_WEBGL, true);
                 _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, _gl.UNSIGNED_BYTE, element);
             },
-            asTexture: function () {
-                return _texture;
-            },
+            texture: _texture,
             width: _width,
             height: _height
         }

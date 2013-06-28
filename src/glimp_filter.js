@@ -65,7 +65,7 @@
                 
                 // Set the frameIn texture as input
                 gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, frameIn.asTexture());
+                gl.bindTexture(gl.TEXTURE_2D, frameIn.texture);
 
                 // Set coordinates
                 var vertexAttribute = gl.getAttribLocation(_program, 'vertex');
@@ -92,9 +92,9 @@
                     _callback.apply (this, args);
                 }
 
-                if(frameOut && frameOut.asTexture) {
+                if(frameOut && frameOut.texture) {
                     // Set the frameOut texture as output
-                    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameOut.asTexture(), 0);
+                    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameOut.texture, 0);
                     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
                         throw new Error('incomplete framebuffer');
                     }
