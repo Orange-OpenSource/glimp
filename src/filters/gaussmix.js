@@ -31,7 +31,7 @@
             float dist2 = pow(color.r-rcolor.r,2.0);\
             dist2 += pow(color.g-rcolor.g,2.0);\
             dist2 += pow(color.b-rcolor.b,2.0);\
-            float invsig2 = 1.0 - dist2/3.0;\
+            float invsig2 = min(1.0,3.0/dist2);\
             gl_FragColor = vec4(\
                 color.rgb*ratio + rcolor.rgb*(1.0-ratio),\
                 invsig2*ratio + rcolor.a*(1.0-ratio));\
