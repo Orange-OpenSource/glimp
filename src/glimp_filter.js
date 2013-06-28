@@ -32,8 +32,9 @@
         return shader;
     }
     
-    var Filter = function (gl, vertexSource, fragmentSource, callback) {
+    var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
+        var gl = canvas.gl;
         var _callback = callback;
         // Create the filter program
         var _program = gl.createProgram();
@@ -106,8 +107,7 @@
 
     global.addFilter = function (name, vertexSource, fragmentSource, callback) {
         global[name] = function () {
-            var canvas = global.canvas();
-            return new Filter(canvas.gl, vertexSource, fragmentSource, callback);
+            return new Filter(global.canvas(), vertexSource, fragmentSource, callback);
         };
     };
     
