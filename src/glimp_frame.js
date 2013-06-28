@@ -16,18 +16,32 @@
 
         return texture;
     };
-    
+        
     var Frame = function (gl, width, height) {
         var _width = width;
         var _height = height;
         var _gl = gl;
         var _texture = createTexture(_gl, _width, _height);
+        var _copyfb;
         
         return {
             load : function (element) {
                 _gl.bindTexture(_gl.TEXTURE_2D, _texture);
                 _gl.pixelStorei(_gl.UNPACK_FLIP_Y_WEBGL, true);
                 _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, _gl.UNSIGNED_BYTE, element);
+            },
+            copy: function (buffer) {
+                _copyfb = _copyfb || gl.createFramebuffer();
+                gl.bindFramebuffer(gl.FRAMEBUFFER, _copyfb);
+                gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, _texture, 0);
+                if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+                    throw new Error('incomplete framebuffer');
+                }
+                gl.viewport(0, 0, _width, _height);
+
+                gl.readPixels(0, 0, _width, _height, gl.RGBA, gl.UNSIGNED_BYTE, buffer);
+
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);                
             },
             texture: _texture,
             width: _width,
