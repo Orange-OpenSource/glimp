@@ -60,7 +60,7 @@ div.main > canvas {
         var start = function() {
             var options = new(function(){
                 this.alpha = 0.2;
-                this.threshold = 0.1;
+                this.threshold = 0.05;
                 this.kSize = 2;
             });
             
@@ -68,9 +68,8 @@ div.main > canvas {
             
             gui.add(options, 'alpha',0.01,1.0).step(0.01);
             gui.add(options, 'threshold',0,1).step(0.05);
-            gui.add(options, 'kSize',1,10).step(1);
             
-            var filter0,filter1,filter2,filter3;
+            var mix,mask,filter2,filter3;
             var videoFrame,bgmodel,fgmask;
             var tick = function() {
                 stat.new_frame();
@@ -80,16 +79,12 @@ div.main > canvas {
                         videoFrame = glimp.frame(video);
                         bgmodel = glimp.frame(video);
                         fgmask = glimp.frame();
-                        filter0 = glimp.gaussmix();
-                        filter1 = glimp.gaussmask();
-                        filter2 = glimp.erode();
-                        filter3 = glimp.dilate();
+                        mix = glimp.gaussmix();
+                        mask = glimp.gaussmask();
                     } else {
                         videoFrame.load(video);
-                        filter1.apply(videoFrame,fgmask,bgmodel,options.threshold);
-                        filter0.apply(videoFrame,bgmodel,bgmodel,Math.max(options.alpha,1/nframes));
-                        filter2.apply(fgmask,fgmask);
-                        filter3.apply(fgmask,null,options.kSize);
+                        mask.apply(videoFrame,null,bgmodel,options.threshold);
+                        mix.apply(videoFrame,bgmodel,bgmodel,Math.max(options.alpha,1/nframes));
                     }
                 }
                 log.innerHTML = stat.log();
