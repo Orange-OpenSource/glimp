@@ -8,7 +8,7 @@
  * - the alpha component decreases with the variance ('noisy' pixels
  * are given a low alpha value)
  * 
- * ratio: the mixture ratio (0 to 1)
+ * ratio: the mixture ratio, from 0 (no change) to 1 (full replacement)
  * 
  */
 (function(global) {
@@ -33,8 +33,8 @@
             dist2 += pow(color.b-rcolor.b,2.0);\
             float invsig2 = min(1.0,3.0/dist2);\
             gl_FragColor = vec4(\
-                color.rgb*ratio + rcolor.rgb*(1.0-ratio),\
-                invsig2*ratio + rcolor.a*(1.0-ratio));\
+                mix(color.rgb,rcolor.rgb,ratio),\
+                mix(invsig2,rcolor.a,ratio));\
         }\
         ',
         // Uniforms callback

@@ -84,7 +84,7 @@ div.main > canvas {
                     } else {
                         videoFrame.load(video);
                         mask.apply(videoFrame,null,bgmodel,options.threshold);
-                        mix.apply(videoFrame,bgmodel,bgmodel,Math.max(options.alpha,1/nframes));
+                        mix.apply(videoFrame,bgmodel,bgmodel,1-Math.max(options.alpha,1/nframes));
                     }
                 }
                 log.innerHTML = stat.log();
