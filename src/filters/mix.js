@@ -3,7 +3,7 @@
  * 
  * Filter allowing to mix the input frame with a reference frame
  * 
- * alpha: 0 to 1 (0 for a full replacement, 1 means no change)
+ * alpha: 0 to 1 (0 means no change, 1 a full replacement)
  * 
  */
 (function(global) {
@@ -23,7 +23,7 @@
         void main() {\
             vec4 color = texture2D(texture, texCoord);\
             vec4 rcolor = texture2D(reference, texCoord);\
-            gl_FragColor = color*alpha + rcolor*(1.0-alpha);\
+            gl_FragColor = mix(color,rcolor,alpha);\
         }\
         ',
         // Uniforms callback
