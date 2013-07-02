@@ -46,6 +46,9 @@
             var refLocation = gl.getUniformLocation(program, "reference");
             gl.uniform1i(refLocation, 1);
             // Set mix ratio
+            // Note: since the result is stored in a single byte per channel,
+            // a ratio lower than 1/255 is equivalent to zero
+            ratio = Math.min(1.0,ratio);
             var ratioLocation = gl.getUniformLocation(program, "ratio");
             gl.uniform1f(ratioLocation, ratio);
         }

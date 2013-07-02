@@ -35,6 +35,9 @@
             var refLocation = gl.getUniformLocation(program, "reference");
             gl.uniform1i(refLocation, 1);
             // Set alpha
+            // Note: since the result is stored in a single byte per channel,
+            // alpha value lower than 1/255 are equivalent to zero
+            alpha = Math.min(1.0,alpha);
             var alphaLocation = gl.getUniformLocation(program, "alpha");
             gl.uniform1f(alphaLocation, alpha);
         }
