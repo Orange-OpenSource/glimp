@@ -119,9 +119,13 @@
         }
     };
 
+    global.createFilter = function (vertexSource, fragmentSource, callback) {
+        return new Filter(global.canvas(), vertexSource, fragmentSource, callback);
+    };
+    
     global.addFilter = function (name, vertexSource, fragmentSource, callback) {
         global[name] = function () {
-            _filters[name] = _filters[name] || new Filter(global.canvas(), vertexSource, fragmentSource, callback);
+            _filters[name] = _filters[name] || global.createFilter(vertexSource, fragmentSource, callback);
             var args = Array.prototype.slice.call(arguments);
             _filters[name].run.apply (this, args);
         };
