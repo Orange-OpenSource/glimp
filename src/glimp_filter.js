@@ -61,7 +61,7 @@
         var _fb = gl.createFramebuffer();
                 
         return {
-            apply : function (frameIn,frameOut) {
+            run : function (frameIn,frameOut) {
                 // Bind the framebuffer
                 if(frameOut)
                     gl.bindFramebuffer(gl.FRAMEBUFFER, _fb);
@@ -121,7 +121,7 @@
         global[name] = function () {
             _filters[name] = _filters[name] || new Filter(global.canvas(), vertexSource, fragmentSource, callback);
             var args = Array.prototype.slice.call(arguments);
-            _filters[name].apply.apply (this, args);
+            _filters[name].run.apply (this, args);
         };
     };
     
