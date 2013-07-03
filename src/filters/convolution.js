@@ -156,6 +156,9 @@
         ',
         // Uniforms callback
         function (gl, program, frameIn, frameOut, kernel) {
+            if(frameIn == frameOut){
+                throw new Error('in-place convolution is not supported');
+            }
             kernel = kernel || 'normal';
             var kernelLocation = gl.getUniformLocation(program, "u_kernel[0]");
             gl.uniform1fv(kernelLocation, kernels[kernel]);
