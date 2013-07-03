@@ -6,6 +6,7 @@
                 <file name="glimp_canvas.js"/>
                 <file name="glimp_frame.js"/>
                 <file name="glimp_filter.js"/>
+                <file name="glimp_bgfg.js"/>                
                 <file name="glimp_export.js"/>
             </filelist>
             <filelist id="filters" dir="../src/filters">
@@ -13,10 +14,13 @@
                 <file name="convolution.js"/>
                 <file name="mix.js"/>
                 <file name="colormask.js"/>
-                <file name="gaussmix.js"/>
-                <file name="gaussmask.js"/>
                 <file name="erode.js"/>
                 <file name="dilate.js"/>
+            </filelist>
+            <filelist id="bgfg" dir="../src/bgfg">
+                <file name="basic.js"/>
+                <file name="average.js"/>
+                <file name="gaussian.js"/>
             </filelist>
         </concat>
     </target>
