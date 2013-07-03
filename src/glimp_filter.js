@@ -31,6 +31,9 @@
         }
         return shader;
     }
+
+    // A framebuffer used to output filters results to a texture
+    var _fb;
     
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
@@ -57,14 +60,14 @@
         var _invCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, _invCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 0, 0, 1, 1, 1, 0 ]), gl.STATIC_DRAW);
-        // Create a framebuffer for this filter
-        var _fb = gl.createFramebuffer();
                 
         return {
             run : function (frameIn,frameOut) {
                 // Bind the framebuffer
-                if(frameOut)
+                if(frameOut){
+                    _fb = _fb || gl.createFramebuffer();
                     gl.bindFramebuffer(gl.FRAMEBUFFER, _fb);
+                }
                 
                 // Set the frameIn texture as input
                 gl.activeTexture(gl.TEXTURE0);
