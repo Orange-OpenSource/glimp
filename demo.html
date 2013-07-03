@@ -52,7 +52,6 @@ div.main > video {
         var stat = new profiler();
 
         var start = function() {
-            var filter0,filter1;
             var frame0,frame1;
             var tick = function() {
                 stat.new_frame();
@@ -60,12 +59,10 @@ div.main > video {
                     if(!frame0) {
                         frame0 = glimp.frame(video);
                         frame1 = glimp.frame();
-                        filter0 = glimp.convol();
-                        filter1 = glimp.dilate();
                     } else {
                         frame0.load(video);
-                        filter0.apply(frame0,frame1,"edgeDetect2");
-                        filter1.apply(frame1,null,2);
+                        glimp.convol(frame0,frame1,"edgeDetect2");
+                        glimp.dilate(frame1,null,2);
                     }
                 }
                 log.innerHTML = stat.log();

@@ -69,7 +69,6 @@ div.main > canvas {
             gui.add(options, 'alpha',0.05,1.0).step(0.01);
             gui.add(options, 'threshold',0,1).step(0.05);
             
-            var mix,mask,filter2,filter3;
             var videoFrame,bgmodel,fgmask;
             var tick = function() {
                 stat.new_frame();
@@ -79,12 +78,10 @@ div.main > canvas {
                         videoFrame = glimp.frame(video);
                         bgmodel = glimp.frame(video);
                         fgmask = glimp.frame();
-                        mix = glimp.gaussmix();
-                        mask = glimp.gaussmask();
                     } else {
                         videoFrame.load(video);
-                        mask.apply(videoFrame,null,bgmodel,options.threshold);
-                        mix.apply(videoFrame,bgmodel,bgmodel,1-Math.max(options.alpha,1/nframes));
+                        glimp.gaussmask(videoFrame,null,bgmodel,options.threshold);
+                        glimp.gaussmix(videoFrame,bgmodel,bgmodel,1-Math.max(options.alpha,1/nframes));
                     }
                 }
                 log.innerHTML = stat.log();

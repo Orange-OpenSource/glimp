@@ -114,10 +114,14 @@
             }
         }
     };
+    
+    _filters = new Array();
 
     global.addFilter = function (name, vertexSource, fragmentSource, callback) {
         global[name] = function () {
-            return new Filter(global.canvas(), vertexSource, fragmentSource, callback);
+            _filters[name] = _filters[name] || new Filter(global.canvas(), vertexSource, fragmentSource, callback);
+            var args = Array.prototype.slice.call(arguments);
+            _filters[name].apply.apply (this, args);
         };
     };
     
