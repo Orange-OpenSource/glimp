@@ -40,7 +40,6 @@
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
         var gl = canvas.gl;
-        var _callback = callback;
         // Create the filter program
         var _program = gl.createProgram();
         vertexSource = vertexSource || defaultVertexSource;
@@ -94,13 +93,13 @@
                 gl.uniform1i(texLoc, 0);
                 
                 // This callback allows the filter to be specialized
-                if(_callback) {
+                if(callback) {
                     // Get the extra parameters we may have received
                     var args = Array.prototype.slice.call(arguments);
                     // Add gl & program parameters at the beginning
                     args.splice(0, 0, gl, _program);
                     // Call our callback
-                    _callback.apply (this, args);
+                    callback.apply (this, args);
                 }
 
                 if(frameOut && frameOut.texture) {
