@@ -32,6 +32,8 @@
         return shader;
     }
 
+    // An array to store our filters
+    _filters = new Array();
     // A framebuffer used to output filters results to a texture
     var _fb;
     
@@ -117,8 +119,6 @@
             }
         }
     };
-    
-    _filters = new Array();
 
     global.addFilter = function (name, vertexSource, fragmentSource, callback) {
         global[name] = function () {
