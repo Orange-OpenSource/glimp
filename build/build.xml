@@ -16,6 +16,8 @@
                 <file name="colormask.js"/>
                 <file name="erode.js"/>
                 <file name="dilate.js"/>
+                <file name="binary.js"/>
+                <file name="bborder.js"/>
             </filelist>
             <filelist id="bgfg" dir="../src/bgfg">
                 <file name="basic.js"/>
