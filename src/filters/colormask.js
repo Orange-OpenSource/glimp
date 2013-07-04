@@ -26,14 +26,12 @@
         void main() {\
             vec4 color = texture2D(texture, texCoord);\
             vec4 rcolor = texture2D(reference, texCoord);\
-            float dist2 = pow(color.r-rcolor.r,2.0);\
-            dist2 += pow(color.g-rcolor.g,2.0);\
-            dist2 += pow(color.b-rcolor.b,2.0);\
+            float d = distance(color.rbg,rcolor.rgb)/3.;\
             \
             if (kc == 0.0) {\
-                gl_FragColor = dist2>ts*ts ? color: vec4(0.0,0.0,0.0,0.0);\
+                gl_FragColor = d>ts ? color: vec4(0.0,0.0,0.0,0.0);\
             } else {\
-                gl_FragColor = dist2>ts*ts ? vec4(0.0,0.0,0.0,0.0): color;\
+                gl_FragColor = d>ts ? vec4(0.0,0.0,0.0,0.0): color;\
             }\
         }\
         ',
