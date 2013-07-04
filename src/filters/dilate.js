@@ -1,7 +1,7 @@
 /**
  * @author David Corvoysier / Copyright Orange 2013
  * 
- * Erosion filter
+ * Dilation filter
  * 
  */
 (function(global) {
