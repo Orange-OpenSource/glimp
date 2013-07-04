@@ -60,7 +60,7 @@ div.main > canvas {
         var start = function() {
             var options = new(function(){
                 this.alpha = 0.2;
-                this.threshold = 0.05;
+                this.threshold = 0.1;
             });
             
             var gui = new dat.GUI();
@@ -68,19 +68,17 @@ div.main > canvas {
             gui.add(options, 'alpha',0.05,1.0).step(0.01);
             gui.add(options, 'threshold',0,1).step(0.05);
             
-            var bgfg,videoFrame,bgmodel,fgmask;
+            var bgfg,bgfg1,videoFrame;
             var tick = function() {
                 stat.new_frame();
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     nframes++;
                     if(!videoFrame) {
                         videoFrame = glimp.frame(video);
-                        bgmodel = glimp.frame(video);
-                        fgmask = glimp.frame();
                         bgfg = glimp.bgfg('gaussian');
                     } else {
                         videoFrame.load(video);
-                        bgfg.process(videoFrame,null,1-Math.max(options.alpha,1/nframes),options.threshold,false);
+                        bgfg.process(videoFrame,null,Math.max(options.alpha,1/nframes),options.threshold);
                     }
                 }
                 log.innerHTML = stat.log();
