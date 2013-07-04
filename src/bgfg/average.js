@@ -21,7 +21,7 @@
         // Update function
         function (frameIn,bgmodel,alpha,threshold) {
             // Use the generic mix function 
-            global.mix(frameIn,bgmodel,bgmodel,alpha);
+            global.mix(bgmodel,bgmodel,frameIn,alpha);
         }
     );        
 
