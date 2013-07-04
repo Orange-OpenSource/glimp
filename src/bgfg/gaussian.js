@@ -3,6 +3,12 @@
  * 
  * Gaussian background Subtraction
  *
+ * The bgmodel stores a quantity representing the pixel noise in the
+ * alpha channel.
+ * 
+ * The noisier a pixel is, the bigger the color distance must be to
+ * be classified as foreground. 
+ * 
  */
 (function(global) {
     
@@ -21,40 +27,29 @@
                 // Fragment Shader (null uses default)        
                 '\
                 uniform sampler2D texture;\
-                uniform sampler2D reference;\
+                uniform sampler2D bgmodel;\
                 uniform float ts;\
-                uniform float kc;\
                 varying vec2 texCoord;\
                 void main() {\
                     vec4 color = texture2D(texture, texCoord);\
-                    vec4 rcolor = texture2D(reference, texCoord);\
-                    float dist2 = pow(color.r-rcolor.r,2.0);\
-                    dist2 += pow(color.g-rcolor.g,2.0);\
-                    dist2 += pow(color.b-rcolor.b,2.0);\
-                    dist2 = dist2/3.0;\
+                    vec4 bgcolor = texture2D(bgmodel, texCoord);\
+                    float d = distance(color.rbg,bgcolor.rgb)/3.;\
                     \
-                    if (kc == 0.0) {\
-                        gl_FragColor = dist2*rcolor.a > ts*ts ? color: vec4(0.0,0.0,0.0,0.0);\
-                    } else {\
-                        gl_FragColor = dist2*rcolor.a > ts*ts ? vec4(0.0,0.0,0.0,0.0): color;\
-                    }\
+                    gl_FragColor = d>(ts+bgcolor.a) ? color: vec4(0.0,0.0,0.0,0.0);\
+                    \
                 }\
                 ',
                 // Uniforms callback
-                function (gl, program, frameIn, frameOut, reference, threshold, keepClose) {
-                    // Bind reference texture at position 1
+                function (gl, program, frameIn, fgmask, bgmodel, threshold) {
+                    // Bind bgmodel texture at position 1
                     gl.activeTexture(gl.TEXTURE1);
-                    gl.bindTexture(gl.TEXTURE_2D, reference.texture);
-                    // Set reference uniform to position 1
-                    var refLocation = gl.getUniformLocation(program, "reference");
-                    gl.uniform1i(refLocation, 1);
+                    gl.bindTexture(gl.TEXTURE_2D, bgmodel.texture);
+                    // Set bgmodel uniform to position 1
+                    var bgLocation = gl.getUniformLocation(program, "bgmodel");
+                    gl.uniform1i(bgLocation, 1);
                     // Set threshold
                     var tsLocation = gl.getUniformLocation(program, "ts");
-                    gl.uniform1f(tsLocation, threshold);
-                    // Set proximity inversion flag
-                    keepClose = keepClose || 0;
-                    var kfLocation = gl.getUniformLocation(program, "kc");
-                    gl.uniform1f(kfLocation, keepClose);            
+                    gl.uniform1f(tsLocation, threshold);      
                 }
             );
             _gaussmask.run(frameIn,fgmask,bgmodel,threshold);
@@ -68,35 +63,32 @@
                 // Fragment Shader (null uses default)        
                 '\
                 uniform sampler2D texture;\
-                uniform sampler2D reference;\
-                uniform float ratio;\
+                uniform sampler2D bgmodel;\
+                uniform float alpha;\
                 varying vec2 texCoord;\
                 void main() {\
                     vec4 color = texture2D(texture, texCoord);\
-                    vec4 rcolor = texture2D(reference, texCoord);\
-                    float dist2 = pow(color.r-rcolor.r,2.0);\
-                    dist2 += pow(color.g-rcolor.g,2.0);\
-                    dist2 += pow(color.b-rcolor.b,2.0);\
-                    float invsig2 = min(1.0,3.0/dist2);\
+                    vec4 bgcolor = texture2D(bgmodel, texCoord);\
+                    float d = distance(color.rbg,bgcolor.rgb)/3.;\
                     gl_FragColor = vec4(\
-                        mix(color.rgb,rcolor.rgb,ratio),\
-                        mix(invsig2,rcolor.a,ratio));\
+                        mix(bgcolor.rgb,color.rgb,alpha),\
+                        mix(bgcolor.a,d,alpha));\
                 }\
                 ',
                 // Uniforms callback
-                function (gl, program, frameIn, frameOut, reference, ratio) {
-                    // Bind reference texture at position 1
+                function (gl, program, frameIn, frameOut, bgmodel, alpha) {
+                    // Bind bgmodel texture at position 1
                     gl.activeTexture(gl.TEXTURE1);
-                    gl.bindTexture(gl.TEXTURE_2D, reference.texture);
+                    gl.bindTexture(gl.TEXTURE_2D, bgmodel.texture);
                     // Set reference uniform to position 1
-                    var refLocation = gl.getUniformLocation(program, "reference");
-                    gl.uniform1i(refLocation, 1);
+                    var bgLocation = gl.getUniformLocation(program, "bgmodel");
+                    gl.uniform1i(bgLocation, 1);
                     // Set mix ratio
                     // Note: since the result is stored in a single byte per channel,
                     // a ratio lower than 1/255 is equivalent to zero
-                    ratio = Math.min(1.0,ratio);
-                    var ratioLocation = gl.getUniformLocation(program, "ratio");
-                    gl.uniform1f(ratioLocation, ratio);
+                    alpha = Math.min(1.0,alpha);
+                    var alphaLocation = gl.getUniformLocation(program, "alpha");
+                    gl.uniform1f(alphaLocation, alpha);      
                 }
             );
             _gaussmix.run(frameIn,bgmodel,bgmodel,alpha);
