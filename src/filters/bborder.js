@@ -31,7 +31,7 @@
                 texture2D(texture, texCoord + onePixel * vec2( 0,  1))+\
                 texture2D(texture, texCoord + onePixel * vec2( 1,  1));\
             \
-            if(all(equal(colorSum.rgb,vec3(0.,0.,0.)))\
+            if(all(lessThan(colorSum.rgb,vec3(2.,2.,2.)))\
             || all(equal(colorSum.rgb,vec3(8.,8.,8.)))){\
                 gl_FragColor = vec4(0.,0.,0.,color.a);\
             }else{\
