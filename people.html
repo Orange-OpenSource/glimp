@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Detect human body frame using WebGL</title>
+  <style>
+html, body {
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+
+div.main {
+  margin: 15px auto;
+}
+
+div.main > video {
+  display: none;
+}
+
+div.main > canvas {
+  background-color: black;
+}
+
+  </style>
+  <script src="./glimp.js"></script>
+  <script src="js/profiler.js"></script>
+  <script src="js/compatibility.js"></script>
+  <script src="js/dat.gui.min.js"></script>
+  <script type='text/javascript'>
+    window.addEventListener('load', function() {
+        var section = document.querySelector('div.main'),
+          video = section.querySelector('video'),
+          canvas = section.querySelector('#webgl-canvas');
+          log = document.querySelector('#log');
+        try {
+            glimp.setCanvas(canvas);
+        } catch (error) {
+            log.innerHTML = "<h4>"+error+"</h4>";
+        }
+        try {
+            compatibility.getUserMedia({video: true}, function(stream) {
+                try {
+                    video.src = compatibility.URL.createObjectURL(stream);
+                } catch (error) {
+                    video.src = stream;
+                }
+                setTimeout(function() {
+                        video.play();
+                        start();
+                    }, 500);
+            }, function (error) {
+                log.innerHTML = '<h4>WebRTC not available.</h4>';
+            });
+        } catch (error) {
+            log.innerHTML = '<h4>Unable to get access to your webcam</h4>';
+        }
+
+        var stat = new profiler();
+
+        var start = function() {
+                        
+            var videoFrame,tmpFrame;
+            var tick = function() {
+                stat.new_frame();
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    nframes++;
+                    if(!videoFrame) {
+                        videoFrame = glimp.frame(video);
+                        tmpFrame = glimp.frame();
+                    } else {
+                        videoFrame.load(video);
+                        glimp.skin(videoFrame,videoFrame);
+                        glimp.binary(videoFrame,videoFrame);
+                        glimp.erode(videoFrame,tmpFrame,2);
+                        glimp.bborder(tmpFrame,null);
+                    }
+                }
+                log.innerHTML = stat.log();
+                compatibility.requestAnimationFrame(tick);
+            }
+            var nframes = 0;
+            tick();
+        }
+
+    });
+  </script>
+</head>
+<body>
+  <header>
+  <h1>Image Processing using WebGL</h1>
+  </header>
+  <div class="main">
+    <video></video>
+    <canvas id="webgl-canvas" width="640" height="480"></canvas>
+  </div>
+  <div id="log"></div>
+</body></html>
