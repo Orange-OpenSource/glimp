@@ -23,7 +23,7 @@
                 ||(r<=g)||(r<=b)\
                 ||((r-min(g,b))<=15.0/255.0)\
                 ||(abs(r-g)<=15.0/255.0)){\
-                gl_FragColor = vec4(0.0,0.0,0.0,color.a);\
+                gl_FragColor = vec4(0.0,0.0,0.0,0.0);\
             } else {\
                 gl_FragColor = color;\
             }\
