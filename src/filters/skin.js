@@ -19,13 +19,13 @@
             float g = color.g;\
             float b = color.b;\
             \
-            if ((r>45.0/255.0)&&(g>40.0/255.0)&&(b>20.0/255.0)\
-                &&(r>g)&&(r>b)\
-                &&(r-min(g,b)>15.0/255.0)\
-                &&(abs(r-g)>15.0/255.0)){\
-                gl_FragColor = color;\
-            } else {\
+            if ((r<=45.0/255.0)||(g<=40.0/255.0)||(b<=20.0/255.0)\
+                ||(r<=g)||(r<=b)\
+                ||((r-min(g,b))<=15.0/255.0)\
+                ||(abs(r-g)<=15.0/255.0)){\
                 gl_FragColor = vec4(0.0,0.0,0.0,color.a);\
+            } else {\
+                gl_FragColor = color;\
             }\
         }\
         ',
