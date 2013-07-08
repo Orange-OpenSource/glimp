@@ -19,6 +19,7 @@
                 <file name="binary.js"/>
                 <file name="bborder.js"/>
                 <file name="threshold.js"/>
+                <file name="grayscale.js"/>
             </filelist>
             <filelist id="converters" dir="../src/converters">
                 <file name="rgb2hsv.js"/>
