@@ -70,8 +70,8 @@ div.main > canvas {
                     } else {
                         videoFrame.load(video);
                         glimp.skin(videoFrame,videoFrame);
-                        glimp.binary(videoFrame,videoFrame);
-                        glimp.erode(videoFrame,tmpFrame,2);
+                        glimp.binary(videoFrame,tmpFrame);
+                        //glimp.erode(videoFrame,tmpFrame,2);
                         glimp.bborder(tmpFrame,null);
                     }
                 }
