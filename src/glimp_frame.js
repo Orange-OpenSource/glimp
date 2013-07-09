@@ -3,7 +3,15 @@
  */
 (function(global) {
     
+    var _type;
+    
     function createTexture(gl, width, height) {
+        if(!_type) {
+            _type = gl.UNSIGNED_BYTE;
+            if (gl.getExtension('OES_texture_float')) {
+                _type = gl.FLOAT;
+            }            
+        }
         var texture = gl.createTexture();
         //set properties for the texture
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -12,7 +20,7 @@
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, _type, null);
 
         return texture;
     };
@@ -24,7 +32,7 @@
         return {
             load : function (element) {
                 gl.bindTexture(gl.TEXTURE_2D, _texture);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, element);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, _type, element);
             },
             copy: function (buffer) {
                 _copyfb = _copyfb || gl.createFramebuffer();
