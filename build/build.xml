@@ -24,6 +24,7 @@
             </filelist>
             <filelist id="converters" dir="../src/converters">
                 <file name="rgb2hsv.js"/>
+                <file name="pack.js"/>
             </filelist>
             <filelist id="bgfg" dir="../src/bgfg">
                 <file name="basic.js"/>
