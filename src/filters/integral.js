@@ -22,7 +22,7 @@
         var _frames = [global.frame(),global.frame()];
         var _commonShaderStr = '\
             float packColor(vec4 color) {\
-                vec4 bitShift = vec4(256.,256.*256.,256.*256.*256.,256.*256.*256.*256.);\
+                vec4 bitShift = vec4(255.,255.*256.,255.*256.*256.,255.*256.*256.*256.);\
                 return dot(color, bitShift);\
             }\
             \
@@ -32,7 +32,7 @@
                 color.b = floor((f - color.a * 256.0 * 256.0 * 256.0) / 256.0 / 256.0);\
                 color.g = floor((f - color.a * 256.0 * 256.0 * 256.0 - color.b * 256.0 * 256.0) / 256.0);\
                 color.r = floor(f - color.a * 256.0 * 256.0 * 256.0 - color.b * 256.0 * 256.0 - color.g * 256.0);\
-                return color / 256.0;\
+                return color / 255.0;\
             }\
             float offset(float length,float pass) {\
                 return 1.0/length*exp2(pass);\
