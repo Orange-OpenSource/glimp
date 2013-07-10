@@ -22,15 +22,16 @@
         var _frames = [global.frame(),global.frame()];
         var _commonShaderStr = '\
             float packColor(vec4 color) {\
-                vec3 bitShift = vec3(256.,256.*256.,256.*256.*256.);\
-                return dot(color.rgb, bitShift);\
+                vec4 bitShift = vec4(256.,256.*256.,256.*256.*256.,256.*256.*256.*256.);\
+                return dot(color, bitShift);\
             }\
             \
-            vec3 unpackColor(float f) {\
-                vec3 color;\
-                color.b = floor(f / 256.0 / 256.0);\
-                color.g = floor((f - color.b * 256.0 * 256.0) / 256.0);\
-                color.r = floor(f - color.b * 256.0 * 256.0 - color.g * 256.0);\
+            vec4 unpackColor(float f) {\
+                vec4 color;\
+                color.a = floor(f / 256.0 / 256.0 / 256.0);\
+                color.b = floor((f - color.a * 256.0 * 256.0 * 256.0) / 256.0 / 256.0);\
+                color.g = floor((f - color.a * 256.0 * 256.0 * 256.0 - color.b * 256.0 * 256.0) / 256.0);\
+                color.r = floor(f - color.a * 256.0 * 256.0 * 256.0 - color.b * 256.0 * 256.0 - color.g * 256.0);\
                 return color / 256.0;\
             }\
             float offset(float length,float pass) {\
@@ -47,7 +48,7 @@
             void main() {\
                 vec4 color = texture2D(texture, texCoord);\
                 float s = (color.r * .212671 + color.g * .715160 + color.b * .072169)*255.;\
-                gl_FragColor = vec4(unpackColor(s),0.);\
+                gl_FragColor = unpackColor(s);\
             }\
             ',
             // Uniforms callback
@@ -71,7 +72,7 @@
                 } else {\
                     vec4 pixB = texture2D(texture, texCoord + offset * vec2(-1.,0.));\
                     float s = packColor(pixA) + packColor(pixB);\
-                    gl_FragColor = vec4(unpackColor(s),0.);\
+                    gl_FragColor = unpackColor(s);\
                 }\
             }\
             ',
@@ -101,7 +102,7 @@
                 } else {\
                     vec4 pixB = texture2D(texture, texCoord + offset * vec2(0.,-1.));\
                     float s = packColor(pixA) + packColor(pixB);\
-                    gl_FragColor = vec4(unpackColor(s),0.);\
+                    gl_FragColor = unpackColor(s);\
                 }\
             }\
             ',
