@@ -40,7 +40,7 @@
             texture: _texture,
             width: width,
             height: height,
-            highres: type == gl.UNSIGNED_BYTE 
+            highres: type != gl.UNSIGNED_BYTE 
         }
     };
     
