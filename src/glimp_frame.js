@@ -3,8 +3,6 @@
  */
 (function(global) {
     
-    var _defaultType;
-    
     function createTexture(gl, width, height, type) {
         var texture = gl.createTexture();
         //set properties for the texture
@@ -42,22 +40,24 @@
             texture: _texture,
             width: width,
             height: height,
-            type: type 
+            highres: type == gl.UNSIGNED_BYTE 
         }
     };
     
-    var frame = function (element, width, height, type) {
+    var frame = function (element, width, height, highres) {
         var canvas = global.canvas();
         var gl = canvas.gl;
         var w = width || (element ? element.width || element.videoWidth: canvas.width);
         var h = height || (element ? element.height || element.videoHeight: canvas.height);
-        if(!_defaultType) {
-            _defaultType = gl.UNSIGNED_BYTE;
+        var type = gl.UNSIGNED_BYTE;
+        highres = highres || false;
+        if(highres) {
             if (gl.getExtension('OES_texture_float')) {
-                _defaultType = gl.FLOAT;
+                type = gl.FLOAT;
+            } else {
+                throw new Error('High-resolution textures are not supported by your browser');
             }
         }
-        type = type || _defaultType;
         var f = new Frame(gl, w, h, type);
         if(element) {
             f.load(element);
