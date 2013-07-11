@@ -68,6 +68,8 @@
                 if(frameOut){
                     _fb = _fb || gl.createFramebuffer();
                     gl.bindFramebuffer(gl.FRAMEBUFFER, _fb);
+                } else {
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
                 }
                 
                 // Set the frameIn texture as input
@@ -113,8 +115,6 @@
                 // Draw
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                    
                 
-                // Flip results
-                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
             }
         }
     };
