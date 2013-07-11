@@ -17,6 +17,9 @@
     var _frames;
     
     global.integral = function(frameIn,frameOut,n) {
+        if (!frameOut || !frameOut.highres) {
+            throw new Error('The output needs to be a high res texture');
+        }
         n = n || 2;
         var hpass = Math.ceil(Math.log(frameIn.width)/Math.log(n));
         var vpass = Math.ceil(Math.log(frameIn.height)/Math.log(n));
@@ -110,10 +113,11 @@
         for(var i=0;i<hpass;i++){
             _haddShader.run(_frames[i%2],_frames[(i+1)%2],i);
         }
-        for(var i=0;i<vpass;i++){
+        for(var i=0;i<vpass-1;i++){
             _vaddShader.run(_frames[(i+hpass)%2],_frames[(i+hpass+1)%2],i);
         }
-        global.pack(_frames[(hpass+vpass)%2],frameOut);
+        _vaddShader.run(_frames[(hpass+vpass-1)%2],frameOut,vpass-1);
+        //global.pack(_frames[(hpass+vpass)%2],frameOut);
     }
     
 })(glimp);
