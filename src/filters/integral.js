@@ -20,7 +20,14 @@
         n = n || 2;
         var hpass = Math.ceil(Math.log(frameIn.width)/Math.log(n));
         var vpass = Math.ceil(Math.log(frameIn.height)/Math.log(n));
-        var _frames = _frames || [global.frame(null,frameIn.width,frameIn.height,true),global.frame(null,frameIn.width,frameIn.height,true)];
+        if (!_frames 
+        || (_frames[0].width != frameIn.width)
+        || (_frames[0].height != frameIn.height)){
+            _frames = [
+                global.frame(null,frameIn.width,frameIn.height,true),
+                global.frame(null,frameIn.width,frameIn.height,true)
+            ];
+        }
         var _commonShaderStr = '\
             float offset(float length,float pass) {\
                 return 1.0/length*exp2(pass);\
