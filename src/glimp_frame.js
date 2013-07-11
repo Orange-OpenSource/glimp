@@ -3,15 +3,9 @@
  */
 (function(global) {
     
-    var _type;
+    var _defaultType;
     
-    function createTexture(gl, width, height) {
-        if(!_type) {
-            _type = gl.UNSIGNED_BYTE;
-            if (gl.getExtension('OES_texture_float')) {
-                _type = gl.FLOAT;
-            }            
-        }
+    function createTexture(gl, width, height, type) {
         var texture = gl.createTexture();
         //set properties for the texture
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -20,19 +14,19 @@
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, _type, null);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, type, null);
 
         return texture;
     };
         
-    var Frame = function (gl, width, height) {
-        var _texture = createTexture(gl, width, height);
+    var Frame = function (gl, width, height, type) {
+        var _texture = createTexture(gl, width, height, type);
         var _copyfb;
         
         return {
             load : function (element) {
                 gl.bindTexture(gl.TEXTURE_2D, _texture);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, _type, element);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, type, element);
             },
             copy: function (buffer) {
                 _copyfb = _copyfb || gl.createFramebuffer();
@@ -47,15 +41,24 @@
             },
             texture: _texture,
             width: width,
-            height: height
+            height: height,
+            type: type 
         }
     };
     
-    var frame = function (element, width, height) {
+    var frame = function (element, width, height, type) {
         var canvas = global.canvas();
+        var gl = canvas.gl;
         var w = width || (element ? element.width || element.videoWidth: canvas.width);
         var h = height || (element ? element.height || element.videoHeight: canvas.height);
-        var f = new Frame(canvas.gl, w, h);
+        if(!_defaultType) {
+            _defaultType = gl.UNSIGNED_BYTE;
+            if (gl.getExtension('OES_texture_float')) {
+                _defaultType = gl.FLOAT;
+            }
+        }
+        type = type || _defaultType;
+        var f = new Frame(gl, w, h, type);
         if(element) {
             f.load(element);
         }
