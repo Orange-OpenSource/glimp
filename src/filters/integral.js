@@ -117,7 +117,6 @@
             _vaddShader.run(_frames[(i+hpass)%2],_frames[(i+hpass+1)%2],i);
         }
         _vaddShader.run(_frames[(hpass+vpass-1)%2],frameOut,vpass-1);
-        //global.pack(_frames[(hpass+vpass)%2],frameOut);
     }
     
 })(glimp);
