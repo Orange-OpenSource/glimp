@@ -24,7 +24,11 @@
         return {
             load : function (element) {
                 gl.bindTexture(gl.TEXTURE_2D, _texture);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, type, element);
+                if (element.buffer) {
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, type, element);
+                } else {
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, type, element);
+                }
             },
             copy: function (buffer) {
                 _copyfb = _copyfb || gl.createFramebuffer();
