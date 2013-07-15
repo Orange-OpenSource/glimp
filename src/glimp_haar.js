@@ -11,7 +11,7 @@
  
 (function(global) {
 
-    function generateShader(classifier) {
+    function _genClassifier(classifier) {
 
         var values = new Array();
         
@@ -32,17 +32,28 @@
             vec4 d = texture2D(texture, texCoord + ratio * vec2(x+w,y+h));\
             return (a.r - b.r -c.r + d.r)*weight;\
         }\
-        vec4 getValue(sampler2D tex,vec2 texSize,float index){\
+        vec4 getValue(sampler2D arrayTex,vec2 texSize,float index){\
             float y = index/texSize.x;\
             float x = index - y;\
             return texture2D(arrayTex, vec2(x,y)/texSize);\
         }\
-        vec4 getValue(index) {\
-            return getValue(classifier, classifierSize, index);\
+        float getValue(float index) {\
+            float rIndex = floor(index/4.);\
+            float position = index - rIndex;\
+            vec4 value = getValue(classifier, classifierSize, rIndex);\
+            if (position == 0.) {\
+                return value[0];\
+            } else if (position == 1.) {\
+                return value[1];\
+            } else if (position == 2.) {\
+                return value[2];\
+            } else if (position == 3.) {\
+                return value[3];\
+            }\
         }\
         void main() {\
             vec2 ratio = vec2(1.0, 1.0) / textureSize;\
-            int n = 0;\
+            float n = 0.;\
             float stage_sum, tree_sum;\
             float inv_area = 1.0 / (scale * scale * getValue(n++) * getValue(n++));\
             int sn, tn, fn;\
@@ -106,24 +117,36 @@
             }
             values.push(stage_thresh);
         }
-
-        shaderStr = 'uniform float values[' + values.length + '];' + shaderStr;
+        
+        var width = Math.ceil(Math.pow(Math.ceil(values.length/4),0.5)),
+            height = width;
+        
+        var buffer = new ArrayBuffer(width*height*4*Float32Array.BYTES_PER_ELEMENT);
+        var view = new Float32Array(buffer);
+        
+        var i=values.length;
+        while(i--){
+            view[i] = values[i];
+        }
+        
+        var f = global.frame(view,width,height,true);
         
         return {
             shader : shaderStr,
-            values : values
+            valuesFrame : f
         };
 
     }
     
     global.haar = function (classifier) {
+        var _classifier = _genClassifier(classifier);
         _filter = global.createFilter(
             // Use default vertex shader
             null,
             // Generate fragment shader
-            generateShader(classifier).shader,
+            _classifier.shader,
             // Uniforms callback
-            function (gl, program, frameIn, frameOut, scale, classTex) {
+            function (gl, program, frameIn, frameOut, scale) {
                 var textureSizeLocation = gl.getUniformLocation(program, "textureSize");
                 gl.uniform2f(textureSizeLocation, frameIn.width, frameIn.height);
                 // Set scale
@@ -131,17 +154,19 @@
                 gl.uniform1f(sLocation, scale);
                 // Set our texture of classifiers values
                 gl.activeTexture(gl.TEXTURE1);
-                gl.bindTexture(gl.TEXTURE_2D, classTex.texture);
+                gl.bindTexture(gl.TEXTURE_2D, _classifier.valuesFrame.texture);
                 // Set classifier uniform to position 1
                 var cLocation = gl.getUniformLocation(program, "classifier");
                 gl.uniform1i(cLocation, 1);
                 var classSizeLocation = gl.getUniformLocation(program, "classifierSize");
-                gl.uniform2f(classSizeLocation, classTex.width, classTex.height);
+                gl.uniform2f(classSizeLocation, _classifier.valuesFrame.width, _classifier.valuesFrame.height);
             }
         );
         
         return {
-            generateShader : generateShader
+            find : function (frameIn,frameOut,scale) {
+                _filter.run(frameIn,frameOut,scale);
+            }
         }
     }
     

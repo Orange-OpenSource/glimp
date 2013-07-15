@@ -7,6 +7,7 @@
                 <file name="glimp_frame.js"/>
                 <file name="glimp_filter.js"/>
                 <file name="glimp_bgfg.js"/>                
+                <file name="glimp_haar.js"/>     
                 <file name="glimp_export.js"/>
             </filelist>
             <filelist id="filters" dir="../src/filters">
