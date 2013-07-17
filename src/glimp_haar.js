@@ -23,23 +23,21 @@
         uniform sampler2D classifier;\
         uniform vec2 classifierSize;\
         varying vec2 texCoord;\
-        float sum(float x,float y,float width,float height,float weight,vec2 ratio){\
-            float w = width * scale;\
-            float h = height * scale;\
-            vec4 a = texture2D(texture, texCoord + ratio * vec2(x,y));\
-            vec4 b = texture2D(texture, texCoord + ratio * vec2(x+w,y));\
-            vec4 c = texture2D(texture, texCoord + ratio * vec2(x,y+h));\
-            vec4 d = texture2D(texture, texCoord + ratio * vec2(x+w,y+h));\
+        float sum(float x,float y,float w,float h,float weight,vec2 ratio){\
+            vec4 a = texture2D(texture, texCoord + ratio * vec2(x,y) * scale);\
+            vec4 b = texture2D(texture, texCoord + ratio * vec2(x+w,y) * scale);\
+            vec4 c = texture2D(texture, texCoord + ratio * vec2(x,y+h) * scale);\
+            vec4 d = texture2D(texture, texCoord + ratio * vec2(x+w,y+h) * scale);\
             return (a.r - b.r -c.r + d.r)*weight;\
         }\
         vec4 getValue(sampler2D arrayTex,vec2 texSize,float index){\
-            float y = index/texSize.x;\
-            float x = index - y;\
-            return texture2D(arrayTex, vec2(x,y)/texSize);\
+            float y = floor(index/texSize.x);\
+            float x = index - y*texSize.x;\
+            return texture2D(arrayTex, vec2(x+1.,y+1.)/texSize);\
         }\
         float getValue(float index) {\
             float rIndex = floor(index/4.);\
-            float position = index - rIndex;\
+            float position = index - rIndex*4.;\
             vec4 value = getValue(classifier, classifierSize, rIndex);\
             if (position == 0.) {\
                 return value[0];\
