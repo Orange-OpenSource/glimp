@@ -52,32 +52,39 @@
         void main() {\
             vec2 ratio = vec2(1.0, 1.0) / textureSize;\
             float n = 0.;\
-            float stage_sum, tree_sum;\
-            float inv_area = 1.0 / (scale * scale * getValue(n++) * getValue(n++));\
-            int sn, tn, fn;\
-            float stage_thresh, threshold, left_val, right_val;\
-            sn = int(getValue(n++));\
-            for (int i = 0; i < MAXITER; i++) {\
-                if(i == sn) break;\
-                stage_sum = 0.;\
-                tn = int(getValue(n++));\
-                for (int j = 0; j < MAXITER; j++) {\
-                    if(j == tn) break;\
-                    tree_sum = 0.;\
-                    fn = int(getValue(n++));\
-                    for (int k = 0; k < MAXITER ; k++) {\
-                        if(k == fn) break;\
-                        tree_sum += sum(getValue(n++),getValue(n++),getValue(n++),getValue(n++),getValue(n++),ratio);\
+            float width = getValue(n++);\
+            float height = getValue(n++);\
+            vec2 upperBounds = vec2(1.,1.) - vec2(width,height)*scale/textureSize;\
+            if(any(greaterThan(texCoord,upperBounds))) {\
+                discard;\
+            } else {\
+                float stage_sum, tree_sum;\
+                float inv_area = 1.0 / (scale * scale * width * height);\
+                int sn, tn, fn;\
+                float stage_thresh, threshold, left_val, right_val;\
+                sn = int(getValue(n++));\
+                for (int i = 0; i < MAXITER; i++) {\
+                    if(i == sn) break;\
+                    stage_sum = 0.;\
+                    tn = int(getValue(n++));\
+                    for (int j = 0; j < MAXITER; j++) {\
+                        if(j == tn) break;\
+                        tree_sum = 0.;\
+                        fn = int(getValue(n++));\
+                        for (int k = 0; k < MAXITER ; k++) {\
+                            if(k == fn) break;\
+                            tree_sum += sum(getValue(n++),getValue(n++),getValue(n++),getValue(n++),getValue(n++),ratio);\
+                        }\
+                        threshold = getValue(n++);\
+                        left_val = getValue(n++);\
+                        right_val = getValue(n++);\
+                        stage_sum += (tree_sum * inv_area < threshold ) ? left_val : right_val;\
                     }\
-                    threshold = getValue(n++);\
-                    left_val = getValue(n++);\
-                    right_val = getValue(n++);\
-                    stage_sum += (tree_sum * inv_area < threshold ) ? left_val : right_val;\
+                    stage_thresh = getValue(n++);\
+                    if (stage_sum < stage_thresh) discard;\
                 }\
-                stage_thresh = getValue(n++);\
-                if (stage_sum < stage_thresh) discard;\
+                gl_FragColor = vec4(1.,1.,1.,1.);\
             }\
-            gl_FragColor = vec4(1.,1.,1.,1.);\
         }';
                             
         var cwidth = classifier.size[0] | 0;
