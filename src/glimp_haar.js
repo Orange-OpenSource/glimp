@@ -55,7 +55,7 @@
             float n = 0.;\
             float width = getValue(n++);\
             float height = getValue(n++);\
-            vec2 upperBounds = vec2(1.,1.) - vec2(width,height)*scale/textureSize;\
+            vec2 upperBounds = vec2(1.,1.) - vec2(width,height)*scale*ratio;\
             if(any(greaterThan(texCoord,upperBounds))) {\
                 discard;\
             } else {\
