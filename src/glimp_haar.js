@@ -33,7 +33,8 @@
         vec4 getValue(sampler2D arrayTex,vec2 texSize,float index){\
             float y = floor(index/texSize.x);\
             float x = index - y*texSize.x;\
-            return texture2D(arrayTex, vec2(x+1.,y+1.)/texSize);\
+            vec2 onePixel = 1./(texSize - vec2(1.,1.));\
+            return texture2D(arrayTex, vec2(x,y)*onePixel);\
         }\
         float getValue(float index) {\
             float rIndex = floor(index/4.);\
