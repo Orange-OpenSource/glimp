@@ -45,7 +45,7 @@
             void main() {\
                 vec4 color = texture2D(texture, texCoord);\
                 float s = (color.r * 4899. + color.g * 9617. + color.b * 1868.)*255./16384.;\
-                gl_FragColor = vec4(s,0.,0.,0.);\
+                gl_FragColor = vec4(s,s*s,0.,0.);\
             }\
             ',
             // Uniforms callback
