@@ -23,12 +23,19 @@
         uniform sampler2D classifier;\
         uniform vec2 classifierSize;\
         varying vec2 texCoord;\
-        float sum(float x,float y,float w,float h,float weight,vec2 ratio){\
+        float sqsum(float x,float y,float w,float h,vec2 ratio){\
             vec4 a = texture2D(texture, texCoord + ratio * vec2(x,y) * scale);\
             vec4 b = texture2D(texture, texCoord + ratio * vec2(x+w,y) * scale);\
             vec4 c = texture2D(texture, texCoord + ratio * vec2(x,y+h) * scale);\
             vec4 d = texture2D(texture, texCoord + ratio * vec2(x+w,y+h) * scale);\
-            return (a.r - b.r -c.r + d.r)*weight;\
+            return (a.g - b.g -c.g + d.g);\
+        }\
+        float sum(float x,float y,float w,float h,vec2 ratio){\
+            vec4 a = texture2D(texture, texCoord + ratio * vec2(x,y) * scale);\
+            vec4 b = texture2D(texture, texCoord + ratio * vec2(x+w,y) * scale);\
+            vec4 c = texture2D(texture, texCoord + ratio * vec2(x,y+h) * scale);\
+            vec4 d = texture2D(texture, texCoord + ratio * vec2(x+w,y+h) * scale);\
+            return (a.r - b.r -c.r + d.r);\
         }\
         vec4 getValue(sampler2D arrayTex,vec2 texSize,float index){\
             float y = floor(index/texSize.x);\
@@ -62,6 +69,9 @@
                 gl_FragColor = vec4(1.,1.,1.,1.);\
                 float stage_sum, tree_sum;\
                 float inv_area = 1.0 / (scale * scale * width * height);\
+                float mean = sum(0.,0.,width,height,ratio)*inv_area;\
+                float variance = sqsum(0.,0.,width,height,ratio)*inv_area - mean*mean;\
+                float std = (variance > 0.) ? sqrt(variance) : 1.;\
                 int sn, tn, fn;\
                 float stage_thresh, threshold, left_val, right_val;\
                 sn = int(getValue(n++));\
@@ -75,12 +85,12 @@
                         fn = int(getValue(n++));\
                         for (int k = 0; k < MAXITER ; k++) {\
                             if(k == fn) break;\
-                            tree_sum += sum(getValue(n++),getValue(n++),getValue(n++),getValue(n++),getValue(n++),ratio);\
+                            tree_sum += sum(getValue(n++),getValue(n++),getValue(n++),getValue(n++),ratio)*getValue(n++);\
                         }\
                         threshold = getValue(n++);\
                         left_val = getValue(n++);\
                         right_val = getValue(n++);\
-                        stage_sum += (tree_sum * inv_area < threshold ) ? left_val : right_val;\
+                        stage_sum += (tree_sum * inv_area < threshold*std ) ? left_val : right_val;\
                     }\
                     stage_thresh = getValue(n++);\
                     if (stage_sum < stage_thresh) discard;\
