@@ -66,7 +66,6 @@
             if(any(greaterThan(texCoord,upperBounds))) {\
                 discard;\
             } else {\
-                gl_FragColor = vec4(1.,1.,1.,1.);\
                 float stage_sum, tree_sum;\
                 float inv_area = 1.0 / (scale * scale * width * height);\
                 float mean = sum(0.,0.,width,height,ratio)*inv_area;\
@@ -95,6 +94,7 @@
                     stage_thresh = getValue(n++);\
                     if (stage_sum < stage_thresh) discard;\
                 }\
+                gl_FragColor = vec4(stage_sum-stage_thresh,0.,0.,1.);\
             }\
         }';
                             
