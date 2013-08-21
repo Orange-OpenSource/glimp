@@ -6,7 +6,8 @@
     var _canvas,
         _width,
         _height,
-        _gl;
+        _gl,
+        _fb;
     
     var initialize = function(canvas) {
         _canvas = (canvas && typeof canvas === 'object') ? canvas : document.createElement("canvas");
@@ -16,6 +17,7 @@
         if (!_gl) {
             throw 'This browser does not support WebGL';
         }
+        _fb = _gl.createFramebuffer();
     }
     
     var setCanvas = function(canvas) {
@@ -34,6 +36,7 @@
             width : _width,
             height: _height,
             gl: _gl,
+            fb: _fb,
             resize: resize
         }
     }

@@ -34,8 +34,6 @@
 
     // An array to store our filters
     _filters = new Array();
-    // A framebuffer used to output filters results to a texture
-    var _fb;
     
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
@@ -66,8 +64,7 @@
             run : function (frameIn,frameOut) {
                 // Bind the framebuffer
                 if(frameOut){
-                    _fb = _fb || gl.createFramebuffer();
-                    gl.bindFramebuffer(gl.FRAMEBUFFER, _fb);
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, canvas.fb);
                 } else {
                     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
                 }
@@ -105,6 +102,7 @@
                 }
 
                 if(frameOut && frameOut.texture) {
+                    gl.viewport(0, 0, frameOut.width, frameOut.height);
                     // Set the frameOut texture as output
                     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, frameOut.texture, 0);
                     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
