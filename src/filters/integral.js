@@ -32,7 +32,7 @@
             ];
         }
         var _commonShaderStr = '\
-            float offset(float length,float pass) {\
+            float get_offset(float length,float pass) {\
                 return 1.0/length*exp2(pass);\
             }';
         _initShader = _initShader || global.createFilter(
@@ -63,7 +63,7 @@
             varying vec2 texCoord;\
             void main() {\
                 vec4 pixA = texture2D(texture, texCoord);\
-                float offset = offset(width,pass);\
+                float offset = get_offset(width,pass);\
                 if(texCoord.x <= offset) {\
                     gl_FragColor = pixA;\
                 } else {\
@@ -92,7 +92,7 @@
             varying vec2 texCoord;\
             void main() {\
                 vec4 pixA = texture2D(texture, texCoord);\
-                float offset = offset(height,pass);\
+                float offset = get_offset(height,pass);\
                 if(texCoord.y <= offset) {\
                     gl_FragColor = pixA;\
                 } else {\
