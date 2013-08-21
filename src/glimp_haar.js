@@ -53,7 +53,7 @@
                 return value[1];\
             } else if (position == 2.) {\
                 return value[2];\
-            } else if (position == 3.) {\
+            } else {\
                 return value[3];\
             }\
         }\
