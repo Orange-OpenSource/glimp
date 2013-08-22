@@ -35,59 +35,86 @@
             vec4 d = texture2D(texture, texCoord + ratio * vec2(x+w,y+h) * scale);\
             return (a.r - b.r -c.r + d.r);\
         }\
-        vec4 getValue(sampler2D arrayTex,vec2 texSize,float index){\
+        vec4 lookupValues(sampler2D arrayTex,vec2 texSize,float index){\
             float y = floor(index/texSize.x);\
             float x = index - y*texSize.x;\
             vec2 onePixel = 1./(texSize - vec2(1.,1.));\
             return texture2D(arrayTex, vec2(x,y)*onePixel);\
         }\
-        float getValue(float index) {\
+        vec4 getValues(float index, vec4 values) {\
             float rIndex = floor(index/4.);\
             float position = index - rIndex*4.;\
-            vec4 value = getValue(classifier, classifierSize, rIndex);\
-            if (position == 0.) {\
-                return value[0];\
-            } else if (position == 1.) {\
-                return value[1];\
-            } else if (position == 2.) {\
-                return value[2];\
+            if(position == 0.) {\
+                return lookupValues(classifier, classifierSize, rIndex);\
             } else {\
-                return value[3];\
+                return values;\
+            }\
+        }\
+        float getValue(float index, vec4 values) {\
+            float rIndex = floor(index/4.);\
+            float position = index - rIndex*4.;\
+            if (position == 0.) {\
+                return values[0];\
+            } else if (position == 1.) {\
+                return values[1];\
+            } else if (position == 2.) {\
+                return values[2];\
+            } else {\
+                return values[3];\
             }\
         }\
         void main() {\
             vec2 ratio = vec2(1.0, 1.0) / textureSize;\
-            float n = 0.;\
             vec2 upperBounds = vec2(1.,1.) - vec2(cwidth,cheight)*scale*ratio;\
             if(any(greaterThan(texCoord,upperBounds))) {\
                 discard;\
             } else {\
+                float n = 0.;\
+                vec4 values = vec4 (0.,0.,0.,0.);\
                 float stage_sum, tree_sum;\
                 float inv_area = 1.0 / (scale * scale * cwidth * cheight);\
                 float mean = sum(0.,0.,cwidth,cheight,ratio)*inv_area;\
                 float variance = sqsum(0.,0.,cwidth,cheight,ratio)*inv_area - mean*mean;\
                 float std = (variance > 0.) ? sqrt(variance) : 1.;\
                 int sn, tn, fn;\
+                float x, y, w, h, weight;\
                 float stage_thresh, threshold, left_val, right_val;\
-                sn = int(getValue(n++));\
+                values = getValues(n,values);\
+                sn = int(getValue(n++,values));\
                 for (int i = 0; i < MAXITER; i++) {\
                     if(i == sn) break;\
                     stage_sum = 0.;\
-                    tn = int(getValue(n++));\
+                    values = getValues(n,values);\
+                    tn = int(getValue(n++,values));\
                     for (int j = 0; j < MAXITER; j++) {\
                         if(j == tn) break;\
                         tree_sum = 0.;\
-                        fn = int(getValue(n++));\
+                        values = getValues(n,values);\
+                        fn = int(getValue(n++,values));\
                         for (int k = 0; k < MAXITER ; k++) {\
                             if(k == fn) break;\
-                            tree_sum += sum(getValue(n++),getValue(n++),getValue(n++),getValue(n++),ratio)*getValue(n++);\
+                            values = getValues(n,values);\
+                            x = getValue(n++,values);\
+                            values = getValues(n,values);\
+                            y = getValue(n++,values);\
+                            values = getValues(n,values);\
+                            w = getValue(n++,values);\
+                            values = getValues(n,values);\
+                            h = getValue(n++,values);\
+                            values = getValues(n,values);\
+                            weight = getValue(n++,values);\
+                            tree_sum += sum(x,y,w,h,ratio)*weight;\
                         }\
-                        threshold = getValue(n++);\
-                        left_val = getValue(n++);\
-                        right_val = getValue(n++);\
+                        values = getValues(n,values);\
+                        threshold = getValue(n++,values);\
+                        values = getValues(n,values);\
+                        left_val = getValue(n++,values);\
+                        values = getValues(n,values);\
+                        right_val = getValue(n++,values);\
                         stage_sum += (tree_sum * inv_area < threshold*std ) ? left_val : right_val;\
                     }\
-                    stage_thresh = getValue(n++);\
+                    values = getValues(n,values);\
+                    stage_thresh = getValue(n++,values);\
                     if (stage_sum < stage_thresh) discard;\
                 }\
                 gl_FragColor = vec4(stage_sum-stage_thresh,0.,0.,1.);\
@@ -110,7 +137,6 @@
                 trees = stage.trees,
                 tn = trees.length;
             values.push(tn);
-            window.console.log(values.length);
             for(j = 0; j < tn; ++j) {
                 var tree = trees[j],
                     features = tree.features,
