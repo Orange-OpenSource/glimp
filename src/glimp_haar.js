@@ -19,6 +19,8 @@
         const int MAXITER = 1024;\
         uniform sampler2D texture;\
         uniform vec2 textureSize;\
+        uniform float cwidth;\
+        uniform float cheight;\
         uniform float scale;\
         uniform sampler2D classifier;\
         uniform vec2 classifierSize;\
@@ -60,8 +62,6 @@
         void main() {\
             vec2 ratio = vec2(1.0, 1.0) / textureSize;\
             float n = 0.;\
-            float cwidth = getValue(n++);\
-            float cheight = getValue(n++);\
             vec2 upperBounds = vec2(1.,1.) - vec2(cwidth,cheight)*scale*ratio;\
             if(any(greaterThan(texCoord,upperBounds))) {\
                 discard;\
@@ -100,8 +100,6 @@
                             
         var cwidth = classifier.size[0] | 0;
         var cheight = classifier.size[1] | 0;    
-        values.push(cwidth);
-        values.push(cheight);
         
         var stages = classifier.stages,
             sn = stages.length;
@@ -149,7 +147,9 @@
         
         return {
             shader : shaderStr,
-            valuesFrame : f
+            valuesFrame : f,
+            cwidth: cwidth,
+            cheight: cheight
         };
 
     }
@@ -165,6 +165,11 @@
             function (gl, program, frameIn, frameOut, scale) {
                 var textureSizeLocation = gl.getUniformLocation(program, "textureSize");
                 gl.uniform2f(textureSizeLocation, frameIn.width, frameIn.height);
+                // Set classifier width & height
+                var wLocation = gl.getUniformLocation(program, "cwidth");
+                gl.uniform1f(wLocation, _classifier.cwidth);
+                var hLocation = gl.getUniformLocation(program, "cheight");
+                gl.uniform1f(hLocation, _classifier.cheight);                
                 // Set scale
                 var sLocation = gl.getUniformLocation(program, "scale");
                 gl.uniform1f(sLocation, scale);
