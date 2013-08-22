@@ -10,12 +10,8 @@
  */
  
 (function(global) {
-
-    function _genClassifier(classifier) {
-
-        var values = new Array();
-        
-        var shaderStr = '\
+    
+    var _haarShaderStr = '\
         const int MAXITER = 1024;\
         uniform sampler2D texture;\
         uniform vec2 textureSize;\
@@ -97,6 +93,10 @@
                 gl_FragColor = vec4(stage_sum-stage_thresh,0.,0.,1.);\
             }\
         }';
+
+    function _genClassifier(classifier) {
+
+        var values = new Array();
                             
         var cwidth = classifier.size[0] | 0;
         var cheight = classifier.size[1] | 0;    
@@ -110,6 +110,7 @@
                 trees = stage.trees,
                 tn = trees.length;
             values.push(tn);
+            window.console.log(values.length);
             for(j = 0; j < tn; ++j) {
                 var tree = trees[j],
                     features = tree.features,
@@ -146,7 +147,6 @@
         var f = global.frame(view,width,height,true);
         
         return {
-            shader : shaderStr,
             valuesFrame : f,
             cwidth: cwidth,
             cheight: cheight
@@ -160,7 +160,7 @@
             // Use default vertex shader
             null,
             // Generate fragment shader
-            _classifier.shader,
+            _haarShaderStr,
             // Uniforms callback
             function (gl, program, frameIn, frameOut, scale) {
                 var textureSizeLocation = gl.getUniformLocation(program, "textureSize");
