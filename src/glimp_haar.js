@@ -60,16 +60,16 @@
         void main() {\
             vec2 ratio = vec2(1.0, 1.0) / textureSize;\
             float n = 0.;\
-            float width = getValue(n++);\
-            float height = getValue(n++);\
-            vec2 upperBounds = vec2(1.,1.) - vec2(width,height)*scale*ratio;\
+            float cwidth = getValue(n++);\
+            float cheight = getValue(n++);\
+            vec2 upperBounds = vec2(1.,1.) - vec2(cwidth,cheight)*scale*ratio;\
             if(any(greaterThan(texCoord,upperBounds))) {\
                 discard;\
             } else {\
                 float stage_sum, tree_sum;\
-                float inv_area = 1.0 / (scale * scale * width * height);\
-                float mean = sum(0.,0.,width,height,ratio)*inv_area;\
-                float variance = sqsum(0.,0.,width,height,ratio)*inv_area - mean*mean;\
+                float inv_area = 1.0 / (scale * scale * cwidth * cheight);\
+                float mean = sum(0.,0.,cwidth,cheight,ratio)*inv_area;\
+                float variance = sqsum(0.,0.,cwidth,cheight,ratio)*inv_area - mean*mean;\
                 float std = (variance > 0.) ? sqrt(variance) : 1.;\
                 int sn, tn, fn;\
                 float stage_thresh, threshold, left_val, right_val;\
