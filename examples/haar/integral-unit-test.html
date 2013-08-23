@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Integral Images: Comparison between WebGL & Javascript</title>
+  <style>
+html, body {
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+
+div.main {
+  margin: 15px auto;
+}
+
+div.main > img {
+    display: none;
+}
+
+div.main > canvas {
+  background-color: black;
+  display: inline-block;
+  width: 512px;
+  height: 512px;
+}
+
+  </style>
+  <script src="./glimp.js"></script>
+  <script src="js/profiler.js"></script>
+  <script src="js/compatibility.js"></script>
+  <script src="../cv-tests/jsfeat/build/jsfeat.js"></script>
+  <script src="../cv-tests/jsfeat/cascades/frontalface.js"></script>
+  <script src="data/cascades/frontalface.js"></script>
+  <script src="data/cascades/dummy.js"></script>
+  <script type='text/javascript'>
+    window.addEventListener('load', function() {
+        var section = document.querySelector('div.main'),
+          source = section.querySelector('img'),
+          canvas = section.querySelector('#webgl-canvas');
+          log = document.querySelector('#log');
+        try {
+            glimp.setCanvas(canvas);
+        } catch (error) {
+            log.innerHTML = "<h4>"+error+"</h4>";
+        }
+
+        var stat = new profiler();
+        
+        stat.add("GPU integral image");
+        stat.add("JS integral image");        
+        
+        var w = source.width, h = source.height;
+
+
+        // GPU Integral Image
+        glimp.canvas().resize(w,h);
+                
+        var frame0,frame1;
+        frame0 = glimp.frame(source);
+        frame1 = glimp.frame(null,w,h,true);      
+        frame2 = glimp.frame(null,w,h,true);      
+        stat.start("GPU integral image");
+        glimp.integral(frame0,frame1);
+        stat.stop("GPU integral image");
+
+        glimp.pack(frame1,frame2,1);
+        glimp.copy(frame2);
+
+        // JS Integral Image
+        var ctx = document.getElementById('canvas').getContext('2d');
+        var img_u8 = new jsfeat.matrix_t(w, h, jsfeat.U8C1_t);
+        var ii_sum = new Int32Array((w+1)*(h+1));
+        var ii_sqsum = new Int32Array((w+1)*(h+1));
+        var ii_tilted = new Int32Array((w+1)*(h+1));
+        ctx.drawImage(source, 0, 0, w, h);
+        var imageData = ctx.getImageData(0, 0, w, h);
+        stat.start("JS integral image");
+        jsfeat.imgproc.grayscale(imageData.data, img_u8.data);
+        jsfeat.imgproc.compute_integral_image(img_u8, ii_sum, ii_sqsum, null);
+        stat.stop("JS integral image");
+        
+
+        // Debug
+        var buf = new ArrayBuffer(w*h*4);
+        var view8 = new Uint8Array(buf);
+        var view32 = new Uint32Array(buf);
+        frame2.copy(view8);
+        view32 = new Uint32Array(buf);
+        var i = w*h,j;
+        var tmp = new ArrayBuffer(w*h*4);
+        var diffs_buf = new ArrayBuffer(w*h*4);
+        var diffs = new Uint32Array(diffs_buf);
+        while(i--){
+            var rindex = Math.floor(i/w);
+            var cindex = i%w;
+            var j = (rindex+1)*(w+1)+cindex+1;
+            diffs[i] = Math.abs(view32[i] - ii_sqsum[j]);
+        }
+        log.innerHTML = stat.log();
+
+    });
+  </script>
+</head>
+<body>
+  <header>
+  <h1>Integral Images: Comparison between WebGL & Javascript</h1>
+  </header>
+  <div class="main">
+    <img src="./lena.jpg" width=512 height=512></img>
+    <canvas id="webgl-canvas" width=512 height=512 ></canvas>
+    <canvas id="canvas"  width=512 height=512></canvas>
+  </div>
+  <div id="log"></div>
+</body></html>

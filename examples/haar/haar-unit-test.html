@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>Face Detection: Comparison between WebGL & Javascript</title>
+  <style>
+html, body {
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+
+div.main {
+  margin: 15px auto;
+}
+
+div.main > img {
+    display: none;
+}
+
+div.main > canvas {
+  background-color: black;
+  display: inline-block;
+  width: 320px;
+  height: 320px;
+}
+
+  </style>
+  <script src="./glimp.js"></script>
+  <script src="js/profiler.js"></script>
+  <script src="js/compatibility.js"></script>
+  <script src="../cv-tests/jsfeat/build/jsfeat.js"></script>
+  <script src="../cv-tests/jsfeat/cascades/frontalface.js"></script>
+  <script src="data/cascades/frontalface.js"></script>
+  <script src="data/cascades/dummy.js"></script>
+  <script type='text/javascript'>
+    window.addEventListener('load', function() {
+        var section = document.querySelector('div.main'),
+          source = section.querySelector('img'),
+          canvas = section.querySelector('#webgl-canvas');
+          log = document.querySelector('#log');
+        try {
+            glimp.setCanvas(canvas);
+        } catch (error) {
+            log.innerHTML = "<h4>"+error+"</h4>";
+        }
+
+        var stat = new profiler();
+        
+        stat.add("GPU integral image");
+        stat.add("GPU haar feature detection");
+        stat.add("Read Pixels");
+        stat.add("JS integral image");        
+        stat.add("JS haar feature detection");
+
+        var w = source.width, h = source.height;
+        glimp.canvas().resize(160,160);
+        var ctx = document.getElementById('canvas').getContext('2d');
+        var img_u8 = new jsfeat.matrix_t(w, h, jsfeat.U8C1_t);
+        var ii_sum = new Int32Array((w+1)*(h+1));
+        var ii_sqsum = new Int32Array((w+1)*(h+1));
+        var ii_tilted = new Int32Array((w+1)*(h+1));
+
+        var frame0,frame1,frame2;
+        var gl = glimp.canvas().gl;
+        frame0 = glimp.frame(source);
+        frame1 = glimp.frame(null,w,h,true);      
+        frame2 = glimp.frame(null,160,160,false);      
+        frame3 = glimp.frame(null,160,160,false);      
+                            
+        run();
+     
+        function run(){
+                
+            stat.new_frame();
+            ctx.drawImage(source, 0, 0, w, h);
+            var imageData = ctx.getImageData(0, 0, w, h);
+            stat.start("JS integral image");
+            jsfeat.imgproc.grayscale(imageData.data, img_u8.data);
+            jsfeat.imgproc.compute_integral_image(img_u8, ii_sum, ii_sqsum, null);
+            stat.stop("JS integral image");
+            stat.start("JS haar feature detection");
+            jsfeat.haar.edges_density = 0.13;
+    //        var rects = jsfeat.haar.detect_multi_scale(ii_sum, ii_sqsum, null, null, img_u8.cols, img_u8.rows, jsfeat.haar.frontalface, 1.2, 2);
+            var rects = jsfeat.haar.detect_single_scale(ii_sum, ii_sqsum, null, null, img_u8.cols, img_u8.rows, 4, jsfeat.haar.frontalface);
+            //rects = jsfeat.haar.group_rectangles(rects, 1);
+            stat.stop("JS haar feature detection");
+            ctx.strokeStyle = "rgb(0,255,0)";
+            for(var i = 0; i < rects.length; ++i) {
+                r = rects[i];
+                var sc = 1;
+                ctx.strokeRect((r.x*sc)|0,(r.y*sc)|0,(r.width*sc)|0,(r.height*sc)|0);
+            }
+                    
+            stat.start("GPU integral image");
+            glimp.integral(frame0,frame1);
+            stat.stop("GPU integral image");
+                    
+            var haar = glimp.haar(glimp.frontalface);
+            stat.start("GPU haar feature detection");
+            haar.find(frame1,frame2,4);
+            stat.stop("GPU haar feature detection");
+            
+            glimp.expand(frame2,frame3,4*20/2,-1,0);
+            glimp.expand(frame3,frame2,4*20/2,0,-1);
+            glimp.copy(frame2);
+            var buf = new Uint8Array(w*h*4);
+            stat.start("Read Pixels");
+            frame2.copy(buf);
+            stat.stop("Read Pixels");
+            
+            log.innerHTML = stat.log();
+            
+            requestAnimationFrame(run);
+
+        }
+    });
+  </script>
+</head>
+<body>
+  <header>
+  <h1>Face Detection: Comparison between WebGL & Javascript</h1>
+  </header>
+  <div class="main">
+    <img src="./lena.jpg" width=320 height=320></img>
+    <canvas id="webgl-canvas" width=160 height=160 ></canvas>
+    <canvas id="canvas"  width=320 height=320></canvas>
+  </div>
+  <div id="log"></div>
+</body></html>
