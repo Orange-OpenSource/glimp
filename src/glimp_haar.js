@@ -15,6 +15,7 @@
         const int MAXITER = 1024;\
         uniform sampler2D texture;\
         uniform vec2 textureSize;\
+        uniform int sn;\
         uniform float cwidth;\
         uniform float cheight;\
         uniform float scale;\
@@ -67,7 +68,7 @@
             vec2 ratio = vec2(1.0, 1.0) / textureSize;\
             vec2 upperBounds = vec2(1.,1.) - vec2(cwidth,cheight)*scale*ratio;\
             if(any(greaterThan(texCoord,upperBounds))) {\
-                discard;\
+                gl_FragColor = vec4(0.,0.,0.,0.);\
             } else {\
                 float n = 0.;\
                 vec4 values = vec4 (0.,0.,0.,0.);\
@@ -76,11 +77,9 @@
                 float mean = sum(0.,0.,cwidth,cheight,ratio)*inv_area;\
                 float variance = sqsum(0.,0.,cwidth,cheight,ratio)*inv_area - mean*mean;\
                 float std = (variance > 0.) ? sqrt(variance) : 1.;\
-                int sn, tn, fn;\
+                int tn, fn;\
                 float x, y, w, h, weight;\
                 float stage_thresh, threshold, left_val, right_val;\
-                values = getValues(n,values);\
-                sn = int(getValue(n++,values));\
                 for (int i = 0; i < MAXITER; i++) {\
                     if(i == sn) break;\
                     stage_sum = 0.;\
@@ -115,9 +114,13 @@
                     }\
                     values = getValues(n,values);\
                     stage_thresh = getValue(n++,values);\
-                    if (stage_sum < stage_thresh) discard;\
+                    if (stage_sum < stage_thresh) {\
+                        gl_FragColor = vec4(0.,0.,0.,0.);\
+                        break;\
+                    } else {\
+                        gl_FragColor = vec4(stage_sum-stage_thresh,0.,0.,1.);\
+                    }\
                 }\
-                gl_FragColor = vec4(stage_sum-stage_thresh,0.,0.,1.);\
             }\
         }';
 
@@ -130,7 +133,6 @@
         
         var stages = classifier.stages,
             sn = stages.length;
-        values.push(sn);
         for(i = 0; i < sn; ++i) {
             var stage = stages[i],
                 stage_thresh = stage.threshold,
@@ -175,7 +177,8 @@
         return {
             valuesFrame : f,
             cwidth: cwidth,
-            cheight: cheight
+            cheight: cheight,
+            sn: sn
         };
 
     }
@@ -191,11 +194,13 @@
             function (gl, program, frameIn, frameOut, scale) {
                 var textureSizeLocation = gl.getUniformLocation(program, "textureSize");
                 gl.uniform2f(textureSizeLocation, frameIn.width, frameIn.height);
-                // Set classifier width & height
+                // Set classifier parameters
                 var wLocation = gl.getUniformLocation(program, "cwidth");
                 gl.uniform1f(wLocation, _classifier.cwidth);
                 var hLocation = gl.getUniformLocation(program, "cheight");
                 gl.uniform1f(hLocation, _classifier.cheight);                
+                var snLocation = gl.getUniformLocation(program, "sn");
+                gl.uniform1i(snLocation, _classifier.sn);                
                 // Set scale
                 var sLocation = gl.getUniformLocation(program, "scale");
                 gl.uniform1f(sLocation, scale);
