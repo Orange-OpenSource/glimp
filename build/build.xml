@@ -22,6 +22,7 @@
                 <file name="threshold.js"/>
                 <file name="grayscale.js"/>
                 <file name="integral.js"/>
+                <file name="expand.js"/>
             </filelist>
             <filelist id="converters" dir="../src/converters">
                 <file name="rgb2hsv.js"/>
