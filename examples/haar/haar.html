@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>GPU real-time Face detection demo</title>
+  <style>
+html, body {
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+
+div.main {
+  margin: 15px auto;
+  position: relative;
+  width: 360px;
+  height: 270px;
+}
+
+div.main > * {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+}
+
+div.main > canvas {
+  background-color: transparent;
+  -webkit-transform: scale(3);
+  -webkit-transform-origin: 0 0;
+  -moz-transform: scale(3);
+  -moz-transform-origin: 0 0;
+}
+
+  </style>
+  <script src="../../glimp.js"></script>
+  <script src="../../js/profiler.js"></script>
+  <script src="../../js/compatibility.js"></script>
+  <script src="../../data/cascades/frontalface.js"></script>
+  <script type='text/javascript'>
+    window.addEventListener('load', function() {
+        var section = document.querySelector('div.main'),
+        video = section.querySelector('video'),
+        canvas = section.querySelector('#webgl-canvas');
+        log = document.querySelector('#log');
+        try {
+            glimp.setCanvas(canvas);
+        } catch (error) {
+            log.innerHTML = "<h4>"+error+"</h4>";
+        }
+        try {
+            compatibility.getUserMedia({video: true}, function(stream) {
+                try {
+                    video.src = compatibility.URL.createObjectURL(stream);
+                } catch (error) {
+                    video.src = stream;
+                }
+                setTimeout(function() {
+                        video.play();
+                        run();
+                    }, 500);
+            }, function (error) {
+                log.innerHTML = '<h4>WebRTC not available.</h4>';
+            });
+        } catch (error) {
+            log.innerHTML = '<h4>Unable to get access to your webcam</h4>';
+        }
+
+        var stat = new profiler();
+        
+        stat.add("Acquire Source");
+        stat.add("GPU integral image");
+        stat.add("GPU haar feature detection");
+        stat.add("Render");
+        
+        var w,h,buf,frame0,frame1,frame2,frame3,haar;
+                     
+        function run(){
+                    
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                stat.new_frame();
+                stat.start("Acquire Source");
+                if(!frame0) {
+                    w = video.clientWidth;
+                    h = video.clientHeight;
+                    frame0 = glimp.frame(video);
+                    frame1 = glimp.frame(null,w,h,true);
+                    frame2 = glimp.frame(null,w/3,h/3,false);
+                    frame3 = glimp.frame(null,w/3,h/3,false);
+                    haar = glimp.haar(glimp.frontalface);
+                } else {
+                    frame0.load(video);
+                }
+                stat.stop("Acquire Source");
+                
+                stat.start("GPU integral image");
+                glimp.integral(frame0,frame1);
+                stat.stop("GPU integral image");
+                
+                stat.start("GPU haar feature detection");
+                haar.find(frame1,frame2,5);
+                stat.stop("GPU haar feature detection");
+                
+                stat.start("Render");
+                glimp.expand(frame2,frame3,5*20/3,-1,0);
+                glimp.expand(frame3,frame2,5*20/3,0,-1);
+                glimp.copy(frame2);
+                stat.stop("Render");
+                
+                log.innerHTML = stat.log();
+            }
+            
+            requestAnimationFrame(run);
+
+        }
+    });
+  </script>
+</head>
+<body>
+  <header>
+  <h1>GPU real-time Face detection demo</h1>
+  </header>
+  <div class="main">
+    <video width=360 height=270></video>
+    <canvas width=120 height=90 id="webgl-canvas"></canvas>
+  </div>
+  <div id="log"></div>
+</body></html>
