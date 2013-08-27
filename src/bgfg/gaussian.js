@@ -49,7 +49,7 @@
                     gl.uniform1i(bgLocation, 1);
                     // Set threshold
                     var tsLocation = gl.getUniformLocation(program, "ts");
-                    gl.uniform1f(tsLocation, threshold);      
+                    gl.uniform1f(tsLocation, threshold);
                 }
             );
             _gaussmask.run(frameIn,fgmask,bgmodel,threshold);
@@ -88,12 +88,12 @@
                     // a ratio lower than 1/255 is equivalent to zero
                     alpha = Math.min(1.0,alpha);
                     var alphaLocation = gl.getUniformLocation(program, "alpha");
-                    gl.uniform1f(alphaLocation, alpha);      
+                    gl.uniform1f(alphaLocation, alpha);
                 }
             );
             _gaussmix.run(frameIn,bgmodel,bgmodel,alpha);
         }
-    );        
+    );
         
 
 })(glimp);

@@ -45,7 +45,7 @@
         function (gl, program, frameIn, frameOut, channel) {
             channel = channel || 0;
             var cLocation = gl.getUniformLocation(program, "channel");
-            gl.uniform1i(cLocation, channel);     
+            gl.uniform1i(cLocation, channel);
         }
     );
     

@@ -21,6 +21,6 @@
             // Copy the current frame to the bgmodel 
             global.copy(frameIn,bgmodel);
         }
-    );        
+    );
 
 })(glimp);

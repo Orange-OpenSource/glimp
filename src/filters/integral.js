@@ -23,7 +23,7 @@
         n = n || 2;
         var hpass = Math.ceil(Math.log(frameIn.width)/Math.log(n));
         var vpass = Math.ceil(Math.log(frameIn.height)/Math.log(n));
-        if (!_frames 
+        if (!_frames
         || (_frames[0].width != frameIn.width)
         || (_frames[0].height != frameIn.height)){
             _frames = [
@@ -55,7 +55,7 @@
             // Vertex Shader (null uses default)
             null,
             // Fragment Shader (null uses default)
-            _commonShaderStr +         
+            _commonShaderStr +
             '\
             uniform sampler2D texture;\
             uniform float width;\
@@ -75,16 +75,16 @@
             // Uniforms callback
             function (gl, program, frameIn, frameOut, pass) {
                 var wLocation = gl.getUniformLocation(program, "width");
-                gl.uniform1f(wLocation, frameIn.width);  
+                gl.uniform1f(wLocation, frameIn.width);
                 var pLocation = gl.getUniformLocation(program, "pass");
-                gl.uniform1f(pLocation, pass);      
+                gl.uniform1f(pLocation, pass);
             }
         );
         _vaddShader = _vaddShader || global.createFilter(
             // Vertex Shader (null uses default)
             null,
             // Fragment Shader (null uses default)
-            _commonShaderStr +         
+            _commonShaderStr +
             '\
             uniform sampler2D texture;\
             uniform float height;\
@@ -104,9 +104,9 @@
             // Uniforms callback
             function (gl, program, frameIn, frameOut, pass) {
                 var hLocation = gl.getUniformLocation(program, "height");
-                gl.uniform1f(hLocation, frameIn.height);  
+                gl.uniform1f(hLocation, frameIn.height);
                 var pLocation = gl.getUniformLocation(program, "pass");
-                gl.uniform1f(pLocation, pass);      
+                gl.uniform1f(pLocation, pass);
             }
         );
         _initShader.run(frameIn,_frames[0]);

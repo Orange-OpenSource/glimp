@@ -49,7 +49,7 @@
             // Set proximity inversion flag
             keepClose = keepClose || 0;
             var kfLocation = gl.getUniformLocation(program, "kc");
-            gl.uniform1f(kfLocation, keepClose);            
+            gl.uniform1f(kfLocation, keepClose);
         }
     );
     

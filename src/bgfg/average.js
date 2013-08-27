@@ -23,6 +23,6 @@
             // Use the generic mix function 
             global.mix(bgmodel,bgmodel,frameIn,alpha);
         }
-    );        
+    );
 
 })(glimp);
