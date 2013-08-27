@@ -33,7 +33,7 @@
     }
 
     // An array to store our filters
-    _filters = new Array();
+    var _filters = [];
     
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
@@ -84,7 +84,7 @@
                 if(frameOut)
                     gl.bindBuffer(gl.ARRAY_BUFFER, _texCoordBuffer);
                 else
-                    gl.bindBuffer(gl.ARRAY_BUFFER, _invCoordBuffer);                
+                    gl.bindBuffer(gl.ARRAY_BUFFER, _invCoordBuffer);
                 gl.vertexAttribPointer(texCoordAttribute, 2, gl.FLOAT, false, 0, 0);
                 
                 // Use the first texture
@@ -111,10 +111,10 @@
                 }
                 
                 // Draw
-                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                    
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
                 
             }
-        }
+        };
     };
 
     global.createFilter = function (vertexSource, fragmentSource, callback) {

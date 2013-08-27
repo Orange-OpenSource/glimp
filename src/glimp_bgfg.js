@@ -20,14 +20,14 @@
             mask.apply(this,[frameIn,fgmask,_bgmodel].concat(args));
             // Update background model
             update.apply(this,[frameIn,_bgmodel].concat(args));
-        }
+        };
     };
     
-    var _bgfgs = new Array();
+    var _bgfgs = [];
     
     global.bgfg = function (type) {
         type = type || 'basic';
-        _bgfg = _bgfgs[type];
+        var _bgfg = _bgfgs[type];
         if (!_bgfg) {
             throw new Error('Unknown background-subtractor type');
         }
@@ -38,7 +38,7 @@
         _bgfgs[name] = {
             mask: mask,
             update: update
-        }
+        };
     };
 
 })(glimp);

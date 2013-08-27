@@ -1,0 +1,14 @@
+{
+    "noarg": true,
+    "noempty": true,
+    "latedef": true,
+    "undef": true,
+    "trailing": true,
+    "multistr": true,
+    "laxbreak": true,
+    "devel" : true,
+    "node": true,
+    "browser": true,
+    "predef" : [ 
+        "glimp"] 
+}

@@ -18,11 +18,11 @@
             throw 'This browser does not support WebGL';
         }
         _fb = _gl.createFramebuffer();
-    }
+    };
     
     var setCanvas = function(canvas) {
         initialize(canvas);
-    }
+    };
 
     var canvas = function() {
         if(!_canvas){
@@ -31,15 +31,15 @@
         var resize = function(width,height) {
             _width = _canvas.width = width || _width;
             _height = _canvas.height = height || _height;
-        }
+        };
         return {
             width : _width,
             height: _height,
             gl: _gl,
             fb: _fb,
             resize: resize
-        }
-    }
+        };
+    };
 
     global.canvas = canvas;
     global.setCanvas = setCanvas;

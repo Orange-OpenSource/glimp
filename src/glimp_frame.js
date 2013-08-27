@@ -3,7 +3,7 @@
  */
 (function(global) {
     
-    function createTexture(gl, width, height, type) {
+    var createTexture = function (gl, width, height, type) {
         var texture = gl.createTexture();
         //set properties for the texture
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -43,13 +43,13 @@
                 }
                 _gl.viewport(0, 0, width, height);
                 _gl.readPixels(x, y, w, h, _gl.RGBA, _gl.UNSIGNED_BYTE, buffer);
-                _gl.bindFramebuffer(_gl.FRAMEBUFFER, null);                
+                _gl.bindFramebuffer(_gl.FRAMEBUFFER, null);
             },
             texture: _texture,
             width: width,
             height: height,
-            highres: type != _gl.UNSIGNED_BYTE 
-        }
+            highres: type != _gl.UNSIGNED_BYTE
+        };
     };
     
     var frame = function (element, width, height, highres) {

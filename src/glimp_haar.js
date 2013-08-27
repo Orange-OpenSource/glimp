@@ -126,30 +126,30 @@
 
     function _genClassifier(classifier) {
 
-        var values = new Array();
+        var values = [];
                             
         var cwidth = classifier.size[0] | 0;
-        var cheight = classifier.size[1] | 0;    
+        var cheight = classifier.size[1] | 0;
         
         var stages = classifier.stages,
             sn = stages.length;
-        for(i = 0; i < sn; ++i) {
+        for(var i = 0; i < sn; ++i) {
             var stage = stages[i],
                 stage_thresh = stage.threshold,
                 trees = stage.trees,
                 tn = trees.length;
             values.push(tn);
-            for(j = 0; j < tn; ++j) {
+            for(var j = 0; j < tn; ++j) {
                 var tree = trees[j],
                     features = tree.features,
                     fn = features.length;
                 values.push(fn);
                 if(tree.tilted === 1) {
                     throw new Error('Tilted cascades are not supported');
-                } else { 
-                    for(k=0; k < fn; ++k) {
+                } else {
+                    for(var k=0; k < fn; ++k) {
                         var feature = features[k];
-                        for(l=0; l < 5; ++l) {
+                        for(var l=0; l < 5; ++l) {
                             values.push(feature[l]);
                         }
                     }
@@ -167,7 +167,7 @@
         var buffer = new ArrayBuffer(width*height*4*Float32Array.BYTES_PER_ELEMENT);
         var view = new Float32Array(buffer);
         
-        var i=values.length;
+        i = values.length;
         while(i--){
             view[i] = values[i];
         }
@@ -185,7 +185,7 @@
     
     global.haar = function (classifier) {
         var _classifier = _genClassifier(classifier);
-        _filter = global.createFilter(
+        var _filter = global.createFilter(
             // Use default vertex shader
             null,
             // Generate fragment shader
@@ -198,9 +198,9 @@
                 var wLocation = gl.getUniformLocation(program, "cwidth");
                 gl.uniform1f(wLocation, _classifier.cwidth);
                 var hLocation = gl.getUniformLocation(program, "cheight");
-                gl.uniform1f(hLocation, _classifier.cheight);                
+                gl.uniform1f(hLocation, _classifier.cheight);
                 var snLocation = gl.getUniformLocation(program, "sn");
-                gl.uniform1i(snLocation, _classifier.sn);                
+                gl.uniform1i(snLocation, _classifier.sn);
                 // Set scale
                 var sLocation = gl.getUniformLocation(program, "scale");
                 gl.uniform1f(sLocation, scale);
@@ -219,7 +219,7 @@
             find : function (frameIn,frameOut,scale) {
                 _filter.run(frameIn,frameOut,scale);
             }
-        }
-    }
+        };
+    };
     
 })(glimp);
