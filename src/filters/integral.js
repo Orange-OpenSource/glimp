@@ -113,10 +113,10 @@
         for(var i=0;i<hpass;i++){
             _haddShader.run(_frames[i%2],_frames[(i+1)%2],i);
         }
-        for(var i=0;i<vpass-1;i++){
+        for(i=0;i<vpass-1;i++){
             _vaddShader.run(_frames[(i+hpass)%2],_frames[(i+hpass+1)%2],i);
         }
         _vaddShader.run(_frames[(hpass+vpass-1)%2],frameOut,vpass-1);
-    }
+    };
     
 })(glimp);
