@@ -38,8 +38,8 @@
         ',
         // Uniforms callback
         function (gl, program, frameIn, frameOut, from, to, binary) {
-            from = from || [0.,0.,0.,0.];
-            to = to || [1.,1.,1.,1.];
+            from = from || [0.0,0.0,0.0,0.0];
+            to = to || [1.0,1.0,1.0,1.0];
             binary = binary || false;       
             var fLocation = gl.getUniformLocation(program, "from");
             gl.uniform4fv(fLocation, new Float32Array(from));
