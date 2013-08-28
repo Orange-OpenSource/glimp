@@ -61,30 +61,68 @@ div.main > canvas {
             var options = new(function(){
                 this.alpha = 0.2;
                 this.threshold = 0.1;
+                this.basic = true;
+                this.average = false;
+                this.gaussian = false;
             });
             
             var gui = new dat.GUI();
             
-            gui.add(options, 'alpha',0.05,1.0).step(0.01);
+            gui.add(options, 'alpha',0.01,1.0).step(0.01);
             gui.add(options, 'threshold',0,1).step(0.05);
+            var f = gui.addFolder('Background Model');
+            var c = f.add(options, 'basic').listen();
+            c.onChange(function(value) {
+                if(value){
+                    options.average = false;
+                    options.gaussian = false;
+                    setup();
+                }
+            });
+            c = f.add(options, 'average').listen();
+            c.onChange(function(value) {
+                if(value){
+                    options.basic = false;
+                    options.gaussian = false;
+                    setup();
+                }
+            });
+            c = f.add(options, 'gaussian').listen();
+            c.onChange(function(value) {
+                if(value){
+                    options.basic = false;
+                    options.average = false;
+                    setup();
+                }
+            });
+                                                                        
+            var nframes,bgfg,videoFrame;
             
-            var bgfg,bgfg1,videoFrame;
+            var setup = function() {
+                nframes = 0;
+                var bgmodel = options.basic ? 'basic' : options.average ? 'average' : 'gaussian';
+                bgfg = glimp.bgfg(bgmodel);
+            }
+
             var tick = function() {
                 stat.new_frame();
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     nframes++;
                     if(!videoFrame) {
                         videoFrame = glimp.frame(video);
-                        bgfg = glimp.bgfg('gaussian');
                     } else {
                         videoFrame.load(video);
-                        bgfg.process(videoFrame,null,Math.max(options.alpha,1/nframes),options.threshold);
+                        if(options.basic){
+                            bgfg.process(videoFrame,null,options.threshold);
+                        } else {
+                            bgfg.process(videoFrame,null,Math.max(options.alpha,1/nframes),options.threshold);
+                        }
                     }
                 }
                 log.innerHTML = stat.log();
                 compatibility.requestAnimationFrame(tick);
             }
-            var nframes = 0;
+            setup();
             tick();
         }
 
