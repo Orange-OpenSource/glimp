@@ -11,6 +11,7 @@ html, body {
 
 div.main {
   margin: 15px auto;
+  width: 600px;
 }
 
 div.main > video {
@@ -21,11 +22,15 @@ div.main > canvas {
   background-color: black;
 }
 
+div.main ul > li {
+    text-align: left;
+}
+
   </style>
-  <script src="build/glimp-0.0.1.js"></script>
-  <script src="js/profiler.js"></script>
-  <script src="js/compatibility.js"></script>
-  <script src="js/dat.gui.min.js"></script>
+  <script src="../../build/glimp-0.0.1.js"></script>
+  <script src="../../js/profiler.js"></script>
+  <script src="../../js/compatibility.js"></script>
+  <script src="../../js/dat.gui.min.js"></script>
   <script type='text/javascript'>
     window.addEventListener('load', function() {
         var section = document.querySelector('div.main'),
@@ -136,6 +141,14 @@ div.main > canvas {
   <div class="main">
     <video></video>
     <canvas id="webgl-canvas" width="640" height="480"></canvas>
+    <div>
+    <p>Select the background model subtraction algorithm on the right:</p>
+        <ul>
+          <li>Basic: difference with the previous frame < threshold </li>
+          <li>Average: difference with the average of the 1/alpha last frames < threshold</li>
+          <li>Gaussian: difference with the average of the 1/alpha last frames < threshold * gaussian "noise" factor</li>
+        </ul>
+    </div>
+    <div id="log"></div>
   </div>
-  <div id="log"></div>
 </body></html>
