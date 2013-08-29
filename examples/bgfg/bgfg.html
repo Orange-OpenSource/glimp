@@ -10,20 +10,16 @@ html, body {
 }
 
 div.main {
-  margin: 15px auto;
-  width: 600px;
+    width: 700px;
+    display: inline-block;
 }
 
-div.main > video {
-  display: none;
-}
-
-div.main > canvas {
+div.main canvas {
   background-color: black;
 }
 
-div.main ul > li {
-    text-align: left;
+div.main p {
+    height: 50px;
 }
 
   </style>
@@ -35,30 +31,20 @@ div.main ul > li {
     window.addEventListener('load', function() {
         var section = document.querySelector('div.main'),
           video = section.querySelector('video'),
-          canvas = section.querySelector('#webgl-canvas');
+          canvases = section.getElementsByTagName('canvas');
           log = document.querySelector('#log');
         try {
-            glimp.setCanvas(canvas);
+            glimp.setCanvas(canvases[0]);
         } catch (error) {
             log.innerHTML = "<h4>"+error+"</h4>";
         }
-        try {
-            compatibility.getUserMedia({video: true}, function(stream) {
-                try {
-                    video.src = compatibility.URL.createObjectURL(stream);
-                } catch (error) {
-                    video.src = stream;
-                }
-                setTimeout(function() {
-                        video.play();
-                        start();
-                    }, 500);
-            }, function (error) {
-                log.innerHTML = '<h4>WebRTC not available.</h4>';
-            });
-        } catch (error) {
-            log.innerHTML = '<h4>Unable to get access to your webcam</h4>';
-        }
+        
+        var ctx1 = canvases[1].getContext('2d'),
+            ctx2 = canvases[2].getContext('2d'),
+            img1 = ctx1.createImageData(320,240),
+            img2 = ctx2.createImageData(320,240);
+            view1 = new Uint8Array(img1.data.buffer),
+            view2 = new Uint8Array(img2.data.buffer);
 
         var stat = new profiler();
 
@@ -67,46 +53,25 @@ div.main ul > li {
                 this.alpha = 0.2;
                 this.threshold = 0.1;
                 this.basic = true;
-                this.average = false;
-                this.gaussian = false;
+                this.average = true;
+                this.gaussian = true;
             });
             
             var gui = new dat.GUI();
             
             gui.add(options, 'alpha',0.01,1.0).step(0.01);
             gui.add(options, 'threshold',0,1).step(0.05);
-            var f = gui.addFolder('Background Model');
-            var c = f.add(options, 'basic').listen();
-            c.onChange(function(value) {
-                if(value){
-                    options.average = false;
-                    options.gaussian = false;
-                    setup();
-                }
-            });
-            c = f.add(options, 'average').listen();
-            c.onChange(function(value) {
-                if(value){
-                    options.basic = false;
-                    options.gaussian = false;
-                    setup();
-                }
-            });
-            c = f.add(options, 'gaussian').listen();
-            c.onChange(function(value) {
-                if(value){
-                    options.basic = false;
-                    options.average = false;
-                    setup();
-                }
-            });
+            gui.add(options, 'basic').listen();
+            gui.add(options, 'average').listen();
+            gui.add(options, 'gaussian').listen();
                                                                         
-            var nframes,bgfg,videoFrame;
+            var nframes,basic,average,gaussian,videoFrame,renderFrame;
             
             var setup = function() {
                 nframes = 0;
-                var bgmodel = options.basic ? 'basic' : options.average ? 'average' : 'gaussian';
-                bgfg = glimp.bgfg(bgmodel);
+                basic = glimp.bgfg('basic');
+                average = glimp.bgfg('average');
+                gaussian = glimp.bgfg('gaussian');
             }
 
             var tick = function() {
@@ -115,12 +80,21 @@ div.main ul > li {
                     nframes++;
                     if(!videoFrame) {
                         videoFrame = glimp.frame(video);
+                        renderFrame = glimp.frame(null,320,240,false);
                     } else {
                         videoFrame.load(video);
                         if(options.basic){
-                            bgfg.process(videoFrame,null,options.threshold);
-                        } else {
-                            bgfg.process(videoFrame,null,Math.max(options.alpha,1/nframes),options.threshold);
+                            basic.process(videoFrame,null,options.threshold);
+                        }
+                        if(options.average){                            
+                            average.process(videoFrame,renderFrame,Math.max(options.alpha,1/nframes),options.threshold);
+                            renderFrame.copy(view1)
+                            ctx1.putImageData(img1,0,0);
+                        }
+                        if(options.gaussian){                            
+                            gaussian.process(videoFrame,renderFrame,Math.max(options.alpha,1/nframes),options.threshold);
+                            renderFrame.copy(view2)
+                            ctx2.putImageData(img2,0,0);
                         }
                     }
                 }
@@ -130,6 +104,7 @@ div.main ul > li {
             setup();
             tick();
         }
+        start();
 
     });
   </script>
@@ -139,15 +114,34 @@ div.main ul > li {
   <h1>Background Subtraction using WebGL</h1>
   </header>
   <div class="main">
-    <video></video>
-    <canvas id="webgl-canvas" width="640" height="480"></canvas>
-    <div>
-    <p>Select the background model subtraction algorithm on the right:</p>
-        <ul>
-          <li>Basic: difference with the previous frame < threshold </li>
-          <li>Average: difference with the average of the 1/alpha last frames < threshold</li>
-          <li>Gaussian: difference with the average of the 1/alpha last frames < threshold * gaussian "noise" factor</li>
-        </ul>
+    <table>
+        <tr>
+            <td>
+                <p>Input</p>
+                <video width=320 height=240 src='../media/capture.webm' autoplay loop>
+                </video>
+            </td>
+            <td>
+                <p>"Basic" bg subtraction<br/>
+                difference with the previous frame < threshold</p>
+                <canvas width=320 height=240></canvas>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>"Average" bg subtraction<br/>
+                difference with the average of the 1/alpha last frames < threshold</p>
+                <canvas width=320 height=240></canvas>
+            </td>
+            <td>
+                <p>"Gaussian" bg subtraction<br/>
+                difference with the average of the 1/alpha last frames < threshold + gaussian "noise"</p>
+                <canvas width=320 height=240></canvas>
+            </td>
+        </tr>
+    </table>
+    </div>
+    <p>You can tweak the background model subtraction algorithm on the right</p>
     </div>
     <div id="log"></div>
   </div>
