@@ -46,23 +46,6 @@ div.main > canvas {
         } catch (error) {
             log.innerHTML = "<h4>"+error+"</h4>";
         }
-        try {
-            compatibility.getUserMedia({video: true}, function(stream) {
-                try {
-                    video.src = compatibility.URL.createObjectURL(stream);
-                } catch (error) {
-                    video.src = stream;
-                }
-                setTimeout(function() {
-                        video.play();
-                        run();
-                    }, 500);
-            }, function (error) {
-                log.innerHTML = '<h4>WebRTC not available.</h4>';
-            });
-        } catch (error) {
-            log.innerHTML = '<h4>Unable to get access to your webcam</h4>';
-        }
 
         var stat = new profiler();
         
@@ -111,6 +94,8 @@ div.main > canvas {
             requestAnimationFrame(run);
 
         }
+        
+        run();
     });
   </script>
 </head>
@@ -119,8 +104,8 @@ div.main > canvas {
   <h1>GPU real-time Face detection demo</h1>
   </header>
   <div class="main">
-    <video width=360 height=270></video>
-    <canvas width=120 height=90 id="webgl-canvas"></canvas>
+    <video src="../media/capture.webm" autoplay loop width=320 height=240></video>
+    <canvas width=107 height=80 id="webgl-canvas"></canvas>
   </div>
   <div id="log"></div>
 </body></html>
