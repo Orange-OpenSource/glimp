@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>glimp: Image Processing using WebGL</title>
+  <style>
+html, body {
+  text-align: center;
+  margin:0;
+  padding:0;
+}
+
+div.main {
+  margin: 15px auto;
+}
+
+div.main > video {
+  display: none;
+}
+
+#ui {
+    position: fixed;
+    right: 0px;
+    top: 0px;
+}
+
+  </style>
+  <script src="../../build/glimp-0.0.1.js"></script>
+  <script src="../../js/profiler.js"></script>
+  <script src="../../js/compatibility.js"></script>
+  <script type='text/javascript'>
+    window.addEventListener('load', function() {
+        var section = document.querySelector('div.main'),
+          video = section.querySelector('video'),
+          canvas = section.querySelector('#webgl-canvas');
+          log = document.querySelector('#log');
+        try {
+            glimp.setCanvas(canvas);
+        } catch (error) {
+            log.innerHTML = "<h4>"+error+"</h4>";
+        }
+
+        var stat = new profiler();
+        
+        var effects = [
+            {name: "gaussianBlur",on: false},
+            {name: "gaussianBlur2",on: false},
+            {name: "gaussianBlur3",on: true},
+            {name: "unsharpen",on: false},
+            {name: "sharpness",on: false},
+            {name: "sharpen",on: false},
+            {name: "edgeDetect",on: false},
+            {name: "edgeDetect",on: false},
+            {name: "edgeDetect2",on: true},
+            {name: "edgeDetect3",on: false},
+            {name: "edgeDetect4",on: false},
+            {name: "edgeDetect5",on: false},
+            {name: "edgeDetect6",on: false},
+            {name: "sobelHorizontal",on: false},
+            {name: "sobelVertical",on: false},
+            {name: "previtHorizontal",on: false},
+            {name: "previtVertical",on: false},
+            {name: "boxBlur",on: false},
+            {name: "triangleBlur",on: false},
+            {name: "emboss",on: false}
+        ];
+        var ui = document.getElementById("ui");
+        var table = document.createElement("table");
+        var tbody = document.createElement("tbody");
+        for (var ii = 0; ii < effects.length; ++ii) {
+            var effect = effects[ii];
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            var chk = document.createElement("input");
+            chk.value = effect.name;
+            chk.type = "checkbox";
+            if (effect.on) {
+                chk.checked = "true";
+            }
+            chk.onchange = drawEffects;
+            td.appendChild(chk);
+            td.appendChild(document.createTextNode(effect.name));
+            tr.appendChild(td);
+            tr.draggable = true;
+            tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        ui.appendChild(table);
+        //$("#ui table").tableDnD({onDrop: drawEffects});
+        
+        var frames = [];
+        
+        function drawEffects() {
+            if(!frames[0]){
+                frames[0] = glimp.frame(video);
+                frames[1] = glimp.frame();
+            } else {
+                frames[0].load(video);
+            }
+            var count = 0;
+            for (var ii = 0; ii < tbody.rows.length; ++ii) {
+                var checkbox = tbody.rows[ii].firstChild.firstChild;
+                if (checkbox.checked) {
+                    glimp.convol(frames[count%2],frames[(count+1)%2],checkbox.value);
+                    ++count;
+                }
+            }
+            glimp.copy(frames[count%2]);
+        }
+
+        var tick = function() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                stat.new_frame();
+                drawEffects();
+                log.innerHTML = stat.log();
+            }
+            compatibility.requestAnimationFrame(tick);
+        }
+        tick();
+
+    });
+  </script>
+</head>
+<body>
+  <header>
+  <h1>glimp: Image Processing using WebGL</h1>
+  </header>
+  <div class="main">
+    <video src='../media/capture.webm' autoplay loop></video>
+    <canvas id="webgl-canvas" width="640" height="480"></canvas>
+  </div>
+  <div id="log"></div>
+  <div id="ui"></div>
+</body></html>
