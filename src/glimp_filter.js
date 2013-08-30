@@ -108,6 +108,8 @@
                     if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
                         throw new Error('incomplete framebuffer');
                     }
+                } else {
+                    gl.viewport(0, 0, canvas.width, canvas.height);
                 }
                 
                 // Draw
