@@ -4,54 +4,36 @@
  */
 (function(global) {
 
-    var _canvas,
-        _width,
-        _height,
-        _gl,
-        _fb;
+    var _canvas;
     
-    var initialize = function(canvas) {
-        _canvas = (canvas && typeof canvas === 'object') ? canvas : document.createElement("canvas");
-        _width = _canvas.width;
-        _height = _canvas.height;
-        _gl = _canvas.getContext('webgl') || _canvas.getContext('experimental-webgl');
-        if (!_gl) {
-            throw 'This browser does not support WebGL';
-        }
-        _fb = _gl.createFramebuffer();
-    };
-    
-    var setCanvas = function(canvas) {
-        initialize(canvas);
-    };
-
     /**
      * @class Canvas
      * 
      */
-    var canvas = function() {
-        if(!_canvas){
-            initialize();
+    var Canvas = function(canvas) {
+        canvas = (canvas && typeof canvas === 'object') ? canvas : document.createElement("canvas");
+        var _width = canvas.width;
+        var _height = canvas.height;
+        var _gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (!_gl) {
+            throw 'This browser does not support WebGL';
         }
-        var resize = function(width,height) {
-            _width = _canvas.width = width || _width;
-            _height = _canvas.height = height || _height;
-        };
+        var _fb = _gl.createFramebuffer();
         return {
             width : _width,
             height: _height,
             gl: _gl,
             fb: _fb,
-            /**
-             * @method resize
-             * 
-             */
-            resize: resize
         };
     };
 
-    global.canvas = canvas;
-    global.setCanvas = setCanvas;
+    global.canvas = function() {
+        _canvas = _canvas || new Canvas();
+        return _canvas;
+    };
+    global.setCanvas = function(canvas) {
+        _canvas = new Canvas(canvas);
+    };
 
 })(glimp);
 

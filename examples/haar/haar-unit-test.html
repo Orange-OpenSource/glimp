@@ -52,7 +52,6 @@ div.main > canvas {
         stat.add("JS haar feature detection");
 
         var w = source.width, h = source.height;
-        glimp.canvas().resize(160,160);
         var ctx = document.getElementById('canvas').getContext('2d');
         var img_u8 = new jsfeat.matrix_t(w, h, jsfeat.U8C1_t);
         var ii_sum = new Int32Array((w+1)*(h+1));
