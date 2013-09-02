@@ -2,7 +2,7 @@
  * @author David Corvoysier / Copyright Orange 2013
  * 
  * Adapted from glfx.js, Copyright (C) 2011 by Evan Wallace
- *
+ * 
  */
 (function(global) {
     
@@ -35,6 +35,18 @@
     // An array to store our filters
     var _filters = [];
     
+    /**
+     * @class Filter
+     * 
+     * @constructor
+     * @param canvas {Canvas} the main Canvas
+     * @param vertexSource {string} the Vertex Shader source for that 
+     * filter
+     * @param fragmentSource {string} the Vertex Shader source for that 
+     * filter
+     * @param callback {function} A callback function that can be used 
+     * to set uniforms before the rendering occurs
+     */    
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
         var gl = canvas.gl;
@@ -61,6 +73,18 @@
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 0, 0, 1, 1, 1, 0 ]), gl.STATIC_DRAW);
                 
         return {
+            /**
+             * 
+             * Apply the Filter to an input Frame and store the result
+             * in an output Frame or the main canvas
+             * 
+             * @method run
+             * 
+             * @param frameIn {Frame} the input frame
+             * @param {Frame} [frameOut] the output frame. If omitted,
+             * outputs to the main canvas
+             * 
+             */
             run : function (frameIn,frameOut) {
                 // Bind the framebuffer
                 if(frameOut){
@@ -119,10 +143,50 @@
         };
     };
 
+    /**
+     * @class global
+     * 
+     */
+    /**
+     * @method createFilter
+     * 
+     * @param vertexSource {string} the Vertex Shader source for that 
+     * filter
+     * @param fragmentSource {string} the Vertex Shader source for that 
+     * filter
+     * @param callback {function} A callback function that can be used 
+     * to set uniforms before the rendering occurs
+     * 
+     * @return the new Filter object
+     * 
+     */
     global.createFilter = function (vertexSource, fragmentSource, callback) {
         return new Filter(global.canvas(), vertexSource, fragmentSource, callback);
     };
-    
+
+    /**
+     * 
+     * Extends the glimp namespace with a new filter function
+     * 
+     * Example usage:
+     *     
+     *     glimp.addFilter(foo);
+     * 
+     *     ... 
+     * 
+     *     glimp.foo(frameIn, frameOut);
+     *  
+     * 
+     * @method addFilter
+     * @param name {string} the name of the new Filter
+     * @param vertexSource {string} the Vertex Shader source for that 
+     * filter
+     * @param fragmentSource {string} the Vertex Shader source for that 
+     * filter
+     * @param callback {function} A callback function that can be used 
+     * to set uniforms before the rendering occurs
+     * 
+     */    
     global.addFilter = function (name, vertexSource, fragmentSource, callback) {
         global[name] = function () {
             _filters[name] = _filters[name] || global.createFilter(vertexSource, fragmentSource, callback);
@@ -131,7 +195,16 @@
         };
     };
     
-    // Register our default filter, a simple carbon-copy
+    /**
+     * Our default filter, a simple carbon-copy
+     * 
+     * @method copy
+     * 
+     * @param frameIn {Frame} the input frame
+     * @param {Frame} [frameOut] the output frame. If omitted,
+     * outputs to the main canvas
+     *
+     */
     global.addFilter('copy');
 
 })(glimp);

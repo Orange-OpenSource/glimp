@@ -39,6 +39,18 @@ module.exports = function(grunt) {
                 "build/<%= pkg.name %>-<%= pkg.version %>.js"]
             }
           }
+        },
+        yuidoc: {
+            compile: {
+              name: '<%= pkg.name %>',
+              description: '<%= pkg.description %>',
+              version: '<%= pkg.version %>',
+              url: '<%= pkg.homepage %>',
+              options: {
+                paths: 'src/',
+                outdir: 'doc/'
+              }
+            }
         }
     });
 
@@ -46,8 +58,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-yuidoc');
 
     // Define tasks
-    grunt.registerTask('default', ['jshint','concat','uglify']);
+    grunt.registerTask('default', ['jshint','concat','uglify','yuidoc']);
 
 };

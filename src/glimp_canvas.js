@@ -1,5 +1,6 @@
 /**
  * @author David Corvoysier / Copyright Orange 2013
+ * 
  */
 (function(global) {
 
@@ -24,6 +25,10 @@
         initialize(canvas);
     };
 
+    /**
+     * @class Canvas
+     * 
+     */
     var canvas = function() {
         if(!_canvas){
             initialize();
@@ -37,6 +42,10 @@
             height: _height,
             gl: _gl,
             fb: _fb,
+            /**
+             * @method resize
+             * 
+             */
             resize: resize
         };
     };

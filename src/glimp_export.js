@@ -1,5 +1,9 @@
 /**
  * @author David Corvoysier / Copyright Orange 2013
+ * 
+ * @module glimp
+ * @class global
+ * 
  */
 
 (function(lib) {

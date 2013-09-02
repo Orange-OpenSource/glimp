@@ -4,10 +4,12 @@
   "description": "A webGl IMage Processing Library",
   "author": "David Corvoysier",
   "copyright": "Orange 2013",
+  "homepage": "https://orangeforge.rd.francetelecom.fr/plugins/git/index.php/3865/view/950/",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-jshint": "~0.6.3",
-    "grunt-contrib-uglify": "~0.2.2"
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-yuidoc": "~0.5.0"
   }
 }
