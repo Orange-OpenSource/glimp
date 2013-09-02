@@ -46,7 +46,7 @@
      * filter
      * @param callback {function} A callback function that can be used 
      * to set uniforms before the rendering occurs
-     */    
+     */
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
         var gl = canvas.gl;
@@ -186,7 +186,7 @@
      * @param callback {function} A callback function that can be used 
      * to set uniforms before the rendering occurs
      * 
-     */    
+     */
     global.addFilter = function (name, vertexSource, fragmentSource, callback) {
         global[name] = function () {
             _filters[name] = _filters[name] || global.createFilter(vertexSource, fragmentSource, callback);
