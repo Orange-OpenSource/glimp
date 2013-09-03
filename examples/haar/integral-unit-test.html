@@ -53,8 +53,8 @@ div.main > canvas {
                 
         var frame0,frame1;
         frame0 = glimp.frame(source);
-        frame1 = glimp.frame(null,w,h,true);      
-        frame2 = glimp.frame(null,w,h,true);      
+        frame1 = glimp.frame(w,h,true);      
+        frame2 = glimp.frame(w,h,true);      
         stat.start("GPU integral image");
         glimp.integral(frame0,frame1);
         stat.stop("GPU integral image");

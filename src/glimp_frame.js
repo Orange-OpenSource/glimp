@@ -125,13 +125,58 @@
      * @method frame
      *
      */
-    global.frame = function (element, width, height, highres) {
+    global.frame = function () {
         var canvas = global.canvas();
         var gl = canvas.gl;
-        var w = width || (element ? element.width || element.videoWidth: canvas.width);
-        var h = height || (element ? element.height || element.videoHeight: canvas.height);
+        var w = canvas.width,
+            h = canvas.height,
+            highres = false,
+            element = null;
+        var args = [].slice.call(arguments);
+        switch(args.length){
+            case 0:
+                break;
+            case 1:
+                if (typeof args[0] === 'boolean') {
+                    highres = args[0];
+                } else {
+                    element = args[0];
+                    w = element.width || element.videoWidth;
+                    h = element.height || element.videoHeight;
+                }
+                break;
+            case 2:
+                if (typeof args[0] === 'number') {
+                    w = args[0];
+                    h = args[1];
+                } else {
+                    element = args[0];
+                    w = element.width || element.videoWidth;
+                    h = element.height || element.videoHeight;
+                    highres = args[1];
+                }
+                break;
+            case 3:
+                if (typeof args[0] === 'number') {
+                    w = args[0];
+                    h = args[1];
+                    highres = args[2];
+                } else {
+                    element = args[0];
+                    w = args[1];
+                    h = args[2];
+                }
+                break;
+            case 4:
+                element = args[0];
+                w = args[1];
+                h = args[2];
+                highres = args[3];
+                break;
+            default:
+                throw new Error('Too many parameters');
+        }
         var type = gl.UNSIGNED_BYTE;
-        highres = highres || false;
         if(highres) {
             if (gl.getExtension('OES_texture_float')) {
                 type = gl.FLOAT;

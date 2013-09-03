@@ -27,8 +27,8 @@
         || (_frames[0].width != frameIn.width)
         || (_frames[0].height != frameIn.height)){
             _frames = [
-                global.frame(null,frameIn.width,frameIn.height,true),
-                global.frame(null,frameIn.width,frameIn.height,true)
+                global.frame(frameIn.width,frameIn.height,true),
+                global.frame(frameIn.width,frameIn.height,true)
             ];
         }
         var _commonShaderStr = '\

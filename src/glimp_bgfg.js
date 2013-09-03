@@ -11,7 +11,7 @@
         var _bgmodel;
         
         this.process = function (frameIn,fgmask) {
-            _bgmodel = _bgmodel || global.frame(null,frameIn.width,frameIn.height,true);
+            _bgmodel = _bgmodel || global.frame(frameIn.width,frameIn.height,true);
             // Convert arguments to an array
             var args = Array.prototype.slice.call(arguments);
             // Only keep extra parameters

@@ -80,7 +80,7 @@ div.main p {
                     nframes++;
                     if(!videoFrame) {
                         videoFrame = glimp.frame(video);
-                        renderFrame = glimp.frame(null,320,240,false);
+                        renderFrame = glimp.frame(320,240);
                     } else {
                         videoFrame.load(video);
                         if(options.basic){

@@ -65,9 +65,9 @@ div.main > canvas {
                     w = video.clientWidth;
                     h = video.clientHeight;
                     frame0 = glimp.frame(video);
-                    frame1 = glimp.frame(null,w,h,true);
-                    frame2 = glimp.frame(null,w/3,h/3,false);
-                    frame3 = glimp.frame(null,w/3,h/3,false);
+                    frame1 = glimp.frame(w,h,true);
+                    frame2 = glimp.frame(w/3,h/3);
+                    frame3 = glimp.frame(w/3,h/3);
                     haar = glimp.haar(glimp.frontalface);
                 } else {
                     frame0.load(video);
