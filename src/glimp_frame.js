@@ -16,13 +16,45 @@
 
         return texture;
     };
-        
+
+    /**
+     * 
+     * This class represents a frame, ie a bitmap to be rendered on 
+     * screen. 
+     * 
+     * 
+     * Frames are used as inputs and outputs of the glimp filters.
+     * 
+     * Frames provide methods to load data from HTML elements and to 
+     * export raw pixels to Javascript byte arrays. 
+     * 
+     * 
+     * The pixel data is stored internally as a four components vector 
+     * of either Floats or Unsigned Int.
+     *
+     * @class Frame
+     * 
+     * @constructor
+     * @param canvas {Canvas} the main Canvas
+     * @param width {integer} 
+     * @param height {integer}
+     * @param type {GL_UNSIGNED_INT|GL_FLOAT} the storage format of the 
+     * Frame pixels
+     * 
+     */
     var Frame = function (canvas, width, height, type) {
         var _gl = canvas.gl;
         var _fb = canvas.fb;
         var _texture = createTexture(_gl, width, height, type);
         
         return {
+            /**
+             * Load data from an image, canvas or video element
+             * 
+             * @method load
+             * @param element {HTMLElement}
+             * 
+             */
             load : function (element) {
                 _gl.bindTexture(_gl.TEXTURE_2D, _texture);
                 if (element.buffer) {
@@ -31,6 +63,36 @@
                     _gl.texImage2D(_gl.TEXTURE_2D, 0, _gl.RGBA, _gl.RGBA, type, element);
                 }
             },
+            /**
+             * Copy raw pixels data to a Javascript byte array
+             * 
+             * 
+             * The caller is responsible for allocating a byte array
+             * large enough to contain the exported data.
+             * 
+             * 
+             * Note: Although some WebGL implementations support 
+             * importing Float pixel data, only Unsigned byte pixel data
+             * can be exported.
+             * 
+             * 
+             * Example usage:
+             * 
+             *     var buf = new Uint8Array(w*h*4);
+             *     frame.copy(buf); 
+             * 
+             * @method copy
+             * @param buffer {Uint8Array}
+             * @param [x] {integer} the upper left corner x coordinate of 
+             * the copied area. Set to 0 if omitted.
+             * @param [y] {integer} the upper left corner y coordinate of 
+             * the copied area. Set to 0 if omitted.
+             * @param [w] {integer} the width of the copied area. Set to
+             * the full frame width if omitted.
+             * @param [h] {integer} the height of the copied area. Set
+             * to the full frame height if omitted.
+             * 
+             */
             copy: function (buffer,x,y,w,h) {
                 x = x || 0;
                 y = y || 0;
@@ -51,8 +113,19 @@
             highres: type != _gl.UNSIGNED_BYTE
         };
     };
-    
-    var frame = function (element, width, height, highres) {
+    /**
+     * @class global
+     */
+    /**
+     * Allocate a new glimp Frame
+     * 
+     * 
+     * The frame can optionally be initialized from an HTML element
+     * 
+     * @method frame
+     *
+     */
+    global.frame = function (element, width, height, highres) {
         var canvas = global.canvas();
         var gl = canvas.gl;
         var w = width || (element ? element.width || element.videoWidth: canvas.width);
@@ -72,8 +145,6 @@
         }
         return f;
     };
-
-    global.frame = frame;
 
 })(glimp);
 

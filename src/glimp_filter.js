@@ -36,16 +36,28 @@
     var _filters = [];
     
     /**
+     * 
+     * This class represents a filtering operation. 
+     * 
+     * 
+     * It exposes a single method to apply a specific transformation to 
+     * an input frame and render the result into an output frame or the 
+     * main canvas. 
+     * 
      * @class Filter
      * 
      * @constructor
      * @param canvas {Canvas} the main Canvas
-     * @param vertexSource {string} the Vertex Shader source for that 
-     * filter
-     * @param fragmentSource {string} the Vertex Shader source for that 
-     * filter
+     * @param vertexSource {string|null} the Vertex Shader source for that 
+     * filter. The vertex shader defines the geometry of the rendered
+     * frame. If set to null, the filter will use an orthographic projection.
+     * @param fragmentSource {string|null} the Vertex Shader source for that 
+     * filter. The fragment shader defines the pixel operations applied
+     * on the rendered frame. If set to null, the filter will perform a 
+     * carbon copy.
      * @param callback {function} A callback function that can be used 
      * to set uniforms before the rendering occurs
+     * 
      */
     var Filter = function (canvas, vertexSource, fragmentSource, callback) {
         // Store WebGL context
@@ -150,10 +162,13 @@
     /**
      * @method createFilter
      * 
-     * @param vertexSource {string} the Vertex Shader source for that 
-     * filter
-     * @param fragmentSource {string} the Vertex Shader source for that 
-     * filter
+     * @param vertexSource {string|null} the Vertex Shader source for that 
+     * filter. The vertex shader defines the geometry of the rendered
+     * frame. If set to null, the filter will use an orthographic projection.
+     * @param fragmentSource {string|null} the Vertex Shader source for that 
+     * filter. The fragment shader defines the pixel operations applied
+     * on the rendered frame. If set to null, the filter will perform a 
+     * carbon copy.
      * @param callback {function} A callback function that can be used 
      * to set uniforms before the rendering occurs
      * 
@@ -168,21 +183,25 @@
      * 
      * Extends the glimp namespace with a new filter function
      * 
+     * 
      * Example usage:
      *     
-     *     glimp.addFilter(foo);
-     * 
-     *     ... 
-     * 
-     *     glimp.foo(frameIn, frameOut);
+     *    glimp.addFilter(foo);
+     *     
+     *    ... 
+     *    
+     *    glimp.foo(frameIn, frameOut);
      *  
      * 
      * @method addFilter
      * @param name {string} the name of the new Filter
-     * @param vertexSource {string} the Vertex Shader source for that 
-     * filter
-     * @param fragmentSource {string} the Vertex Shader source for that 
-     * filter
+     * @param vertexSource {string|null} the Vertex Shader source for that 
+     * filter. The vertex shader defines the geometry of the rendered
+     * frame. If set to null, the filter will use an orthographic projection.
+     * @param fragmentSource {string|null} the Vertex Shader source for that 
+     * filter. The fragment shader defines the pixel operations applied
+     * on the rendered frame. If set to null, the filter will perform a 
+     * carbon copy.
      * @param callback {function} A callback function that can be used 
      * to set uniforms before the rendering occurs
      * 
