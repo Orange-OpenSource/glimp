@@ -107,9 +107,23 @@
                 _gl.readPixels(x, y, w, h, _gl.RGBA, _gl.UNSIGNED_BYTE, buffer);
                 _gl.bindFramebuffer(_gl.FRAMEBUFFER, null);
             },
+            /**
+             * The underlying WebGL texture
+             * @property texture {WebGLTexture} 
+             */
             texture: _texture,
+            /**
+             * @property width {number}
+             */
             width: width,
+            /**
+             * @property height {number}
+             */
             height: height,
+            /**
+             * True if it is a float texture
+             * @property highres {boolean}
+             */
             highres: type != _gl.UNSIGNED_BYTE
         };
     };
@@ -120,9 +134,26 @@
      * Allocate a new glimp Frame
      * 
      * 
-     * The frame can optionally be initialized from an HTML element
+     * Four different creation modes are supported:
+     * 
+     * - without any parameters, a blank frame of dimensions matching 
+     * those of the canvas is created,
+     * - providing only width and height creates a blank frame,
+     * - providing an HTMLElement creates a blank frame matching its
+     * dimensions and fills it with the element data,
+     * - providing a byte array and the frame width and height creates
+     * a blank frame and fills it with the array contents
+     * 
+     * All creation modes will by default create an Unsigned byte
+     * frame, but a flag can be specified to create a float frame.  
      * 
      * @method frame
+     * 
+     * @param [args] element | width + height | buffer + 
+     * width + height 
+     * @param [highres] {boolean} If true, creates a float texture
+     * 
+     * @return a Frame object 
      *
      */
     global.frame = function () {
