@@ -24,12 +24,16 @@ Prerequisites:
     npm install
 4. Generate the library 
     grunt
+    
+## Demos
+
+Try it out live [Here](http://orange-opensource.github.io/glimp)
 
 ## Credits
 
 Glimp has been inspired by the following Open Source projects:
 
-- [jsfeat](http://modernizr.com/) 
-- [glfx.js](https://github.com/kaizouman/fpsmeter)
-- [OpenCV](http://w3c-test.org/resources/testharness.js)
+- [jsfeat](http://inspirit.github.io/jsfeat/) 
+- [glfx.js](http://evanw.github.io/glfx.js/)
+- [OpenCV](http://opencv.org/)
 
